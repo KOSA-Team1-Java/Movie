@@ -1,5 +1,6 @@
-import Member.Member;
-import Movie.Screening;
+package movie;
+
+import member.Member;
 
 public class Reservation {
     private int id;
