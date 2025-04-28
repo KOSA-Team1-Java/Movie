@@ -1,4 +1,4 @@
-package theater;
+package Movie;
 
 public abstract class Theater {
 
