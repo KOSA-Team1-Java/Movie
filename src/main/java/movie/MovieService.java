@@ -1,5 +1,7 @@
 package movie;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class MovieService {
@@ -11,15 +13,20 @@ public class MovieService {
     }
 
     public void showMovie() {
-        List<Movie> movies = movieRepository.getMovies();
-        for (Movie movie : movies) {
-            System.out.println(movie.getTitle());
+        try {
+            PrintStream printStream = new PrintStream(System.out, true, "UTF-8");
+            List<String> movies = movieRepository.getMovies();
+            for (String movie : movies) {
+                printStream.println(movie);
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void showScreening(String movie) {
-        movieRepository.getScreenings();
-    }
+//    public void showScreening(String movie) {
+//        movieRepository.getScreenings();
+//    }
 
 //    public Reservation book(Screening screening) {
 //    }
