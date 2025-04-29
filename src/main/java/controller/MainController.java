@@ -26,7 +26,14 @@ public class MainController {
                 System.out.print("예매할 영화 : ");
                 String movieName = scanner.nextLine();
                 movieService.showScreening(movieName);
-
+                System.out.print("지역 선택 : ");
+                String region = scanner.nextLine();
+                System.out.print("상영점 선택 : ");
+                String theaterName = scanner.nextLine(); //ex) 혜화점, 월드타워점
+                System.out.print("월 ex)4월 : ");
+                String month = scanner.nextLine();
+                System.out.print("일 ex)24 : ");
+                String day = scanner.nextLine();
         }
     }
 }
