@@ -4,7 +4,7 @@ public class MemberService {
 
     public void signUp() {}
 
-    public void login() {}
+    public void login(String id, String password) {}
 
     public void logout() {}
 
