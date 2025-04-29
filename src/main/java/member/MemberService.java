@@ -2,6 +2,12 @@ package member;
 
 public class MemberService {
 
+    private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
     public void signUp() {}
 
     public void login(String id, String password) {}
