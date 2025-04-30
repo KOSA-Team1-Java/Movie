@@ -50,7 +50,7 @@ public class Main {
                 break;
             } else {
                 controller.call(input);
-                System.out.print("무엇을 도와드릴까요( 1:진행, 2: 나가기)");
+                System.out.println("무엇을 도와드릴까요( 1:진행, 2: 나가기)");
             }
         }
         System.out.println("감사합니다!");

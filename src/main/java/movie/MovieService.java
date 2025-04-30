@@ -26,7 +26,7 @@ public class MovieService {
         List<Screening> screenings = movieRepository.getScreenings(movieId);
         for (Screening screening : screenings) {
             System.out.println("영화 번호: " + screening.getId());
-            System.out.println("영화관: " + screening.getTheater().getLocation() + " " + screening.getTheater().getRoomNumber());
+            System.out.println("영화관: " + screening.getTheater().getLocation() + " " + screening.getTheater());
             System.out.println("시간: " + screening.getScreeningDate());
             System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
             System.out.println("-------------------------------");
@@ -58,7 +58,7 @@ public class MovieService {
         } else {
             for (Screening screening : screenings) {
                 System.out.println("Screening ID: " + screening.getId());
-                System.out.println("Theater: " + screening.getTheater().getLocation() + " " + screening.getTheater().getRoomNumber());
+                System.out.println("Theater: " + screening.getTheater().getLocation() + " " + screening.getTheater());
                 System.out.println("Day: " + screening.getScreeningDate());
                 System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
                 System.out.println("-------------------------------");

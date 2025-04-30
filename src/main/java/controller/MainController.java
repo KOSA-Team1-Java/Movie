@@ -114,7 +114,7 @@ public class MainController {
                 // 선택된 상영 정보 출력
                 System.out.println("✅ 선택하신 영화:");
                 System.out.println("영화제목: " + selected.getMovie().getTitle());
-                System.out.println("영화관: " + selected.getTheater().getLocation() + " " + selected.getTheater().getRoomNumber());
+                System.out.println("영화관: " + selected.getTheater().getLocation());
                 System.out.println("날짜: " + selected.getScreeningDate());
                 System.out.println("시간: " + selected.getStartTime() + " ~ " + selected.getEndTime());
                 System.out.println("이용가능좌석: " + selected.getAvailableSeats());
