@@ -2,6 +2,9 @@ package member;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class Member {
 
@@ -9,6 +12,9 @@ public class Member {
     private String password;
     private String name;
     private int age;
+    private int butget;
+
+    private List<Integer> paymentHistory = new ArrayList<>();
 
     public Member(String loginId, String password, String name, int age) {
         this.loginId = loginId;
@@ -17,4 +23,7 @@ public class Member {
         this.age = age;
     }
 
+    public void addPaymentHistory(int amount) {
+        this.paymentHistory.add(amount);
+    }
 }
