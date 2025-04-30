@@ -24,11 +24,15 @@ import controller.MainController;
 import movie.MovieRepository;
 import movie.MovieService;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+        // ✅ 콘솔 출력 인코딩 설정 (한글 깨짐 방지)
+        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
         // MovieRepository와 MovieService 객체를 생성
         MovieRepository movieRepository = new MovieRepository();
         MovieService movieService = new MovieService(movieRepository);
@@ -37,18 +41,19 @@ public class Main {
         MainController controller = new MainController(movieService);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("CGV영화관입니다! ");
-        System.out.println("영화를 선택해주세요");
+        System.out.println("🎬 Welcome to CGV!");
+        System.out.println("1번을 입력해주세요!");
 
         while (true) {
             String input = scanner.nextLine();
-            if (input.equals("exit")) {
+            if (input.equals("2")) {
                 break;
             } else {
                 controller.call(input);
+                System.out.print("무엇을 도와드릴까요( 1:진행, 2: 나가기)");
             }
         }
-        System.out.println("안녕히 가세요");
+        System.out.println("감사합니다!");
     }
 }
 
