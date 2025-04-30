@@ -154,6 +154,7 @@ public class MainController {
                 }
 
                 System.out.println("✅ 결제가 완료되었습니다.");
+                break;
 
             case "2":
                 System.out.println("Exit.");
