@@ -17,11 +17,14 @@ public class MemberService {
 
     public Member login(String id, String password) throws MovieException {
         Member member = memberRepository.findById(id);
-        String hashPassword = PasswordHasher.hash(password);
-        if (member != null && member.getPassword().equals(hashPassword)) {
-            return member;  // 로그인 성공
+        if (member == null) {
+            throw new MovieException("존재하지 않는 회원입니다.");
         }
-        return null;
+        String hashPassword = PasswordHasher.hash(password);
+        if (!member.getPassword().equals(hashPassword)) {
+            throw new MovieException("비밀번호가 일치하지 않습니다."); // 로그인 성공
+        }
+        return member;
     }
 
     public void logout() {}
