@@ -1,10 +1,15 @@
 package movie;
 
+import lombok.Getter;
+
+import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class Movie {
     private int id;
     private String title;
+    private int price;
     private List<Screening> screenings;
 
     public Movie(int id, String title) {
@@ -12,19 +17,7 @@ public class Movie {
         this.title = title;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public List<Screening> getScreenings() {
-        return screenings;
-    }
-
-    public void setScreenings(List<Screening> screenings) {
-        this.screenings = screenings;
+    public int getPrice() {
+        return this.price;
     }
 }

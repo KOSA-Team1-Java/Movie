@@ -1,6 +1,7 @@
 package member;
 
 import exception.MovieException;
+import pay.Pay;
 
 public class MemberService {
 
@@ -35,4 +36,21 @@ public class MemberService {
 
     public void veiwMyPage(){}
 
+    public void processPayment(Member member, Pay payMethod, int amount) {
+        if(member == null) {
+            System.out.println("로그인 되어있지 않습니다.");
+            return;
+        }
+
+        int result = payMethod.pay(amount);
+        if(result != 0) {
+            throw new MovieException("결제 실패: 잔액 부족");
+        }
+//        payMethod.pay(amount);
+//        // 예시: 금액 차감 로직 (예시용)
+//        member.budget -= amount;
+//        System.out.println("잔액: " + member.getBudget() + "원");
+
+        member.addPaymentHistory(amount); // 회원 결제 내역 저장
+    }
 }
