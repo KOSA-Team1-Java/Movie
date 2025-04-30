@@ -141,7 +141,11 @@ public class MainController {
                 Pay payMethod = payType == 1 ? new CreditPay() : new CashPay();
 
                 int price = selectedScreening.getMovie().getPrice(); // 영화 가격 조회
-                memberService.processPayment(member, payMethod, price);
+                try {
+                    memberService.processPayment(member, payMethod, price);
+                } catch (Exception e) {
+                    exceptionController.paymentError(new Exception(e));
+                }
 
                 System.out.println("✅ 결제가 완료되었습니다.");
 

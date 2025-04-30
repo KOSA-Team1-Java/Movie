@@ -12,7 +12,7 @@ public class Member {
     private String password;
     private String name;
     private int age;
-    private int butget;
+    private int budget = 100000;
 
     private List<Integer> paymentHistory = new ArrayList<>();
 
