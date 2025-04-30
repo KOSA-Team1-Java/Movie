@@ -47,14 +47,20 @@ public class MainController {
                 String password1 = scanner.nextLine();
                 try {
                     member = memberService.login(id1, password1);
+                    System.out.println(member.getName() + "님 로그인 되셨습니다");
                 } catch (Exception e) {
                     exceptionController.loginError(e);
                 }
                 break;
 
             case "/logout":
-                member = null;
-                break;
+                if (member == null) {
+                    break;
+                }else {
+                    System.out.println(member.getName() + "님 로그아웃 되셨습니다");
+                    member = null;
+                    break;
+                }
 
             case "/res":
                 // 1단계: 영화 목록 출력
