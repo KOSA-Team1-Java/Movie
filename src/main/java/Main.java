@@ -41,6 +41,7 @@ public class Main {
                 printStream.println("로그인 해주세요");
             }
         }
+        System.out.println("감사합니다!");
         printStream.println("안녕히 가세요");
         printStream.close();
     }
