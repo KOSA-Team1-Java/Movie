@@ -85,6 +85,5 @@ public class MainController {
 //                memberService.bookMovie();
 
         }
-        scanner.close();
     }
 }

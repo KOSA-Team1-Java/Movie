@@ -19,13 +19,8 @@ public class Main {
             if(input.equals("/exit")) {
                 break;
             }
-            if (login==false && input.equals("/signup")) {
+            if(login==true) {
                 mainController.call(input);
-                continue;
-            }
-            if (login==false && input.equals("/login")) {
-                mainController.call(input);
-                login = true;
                 continue;
             }
             if (login==true && input.equals("/logout")) {
@@ -33,8 +28,13 @@ public class Main {
                 login = false;
                 continue;
             }
-            if(login==true) {
+            if (login==false && input.equals("/signup")) {
                 mainController.call(input);
+                continue;
+            }
+            if (login==false && input.equals("/login")) {
+                mainController.call(input);
+                login = true;
                 continue;
             }
             else if (login==false) {

@@ -16,7 +16,12 @@ public class MemberService {
     }
 
     public Member login(String id, String password) throws MovieException {
-        return memberRepository.findById(id);
+        Member member = memberRepository.findById(id);
+        String hashPassword = PasswordHasher.hash(password);
+        if (member != null && member.getPassword().equals(hashPassword)) {
+            return member;  // 로그인 성공
+        }
+        return null;
     }
 
     public void logout() {}
