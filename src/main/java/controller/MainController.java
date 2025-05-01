@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static movie.PrintSeatMap.printSeatMap;
+
 public class MainController {
 
     private final MemberService memberService = new MemberService(new MemberRepository());
@@ -116,6 +118,11 @@ public class MainController {
                     return;
                 }
 
+//                if (selectedScreening.getAvailableSeats() == 0) {
+//                    System.out.println("예약이 모두 완료되어 이용 가능한 좌석이 없습니다.");
+//                    return;
+//                }
+
                 // 5단계: 선택된 상영 정보 출력
                 System.out.println("✅ 선택하신 영화:");
                 System.out.println("영화제목: " + selectedScreening.getMovie().getTitle());
@@ -129,10 +136,19 @@ public class MainController {
                 member.peopleCount = scanner.nextInt();
                 scanner.nextLine();
 
+                // 예약좌석 부분
+                ReservationRepository reservationRepository = new ReservationRepository();
+                List<String> reservedSeats = reservationRepository.findReservedSeatsByScreeningId(selectedScreening.getId());
+
+                // 좌석표 출력 함수
+                printSeatMap(reservedSeats);
+
+
                 // 좌석 예약
 //                System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
 //                String seat = scanner.nextLine();
 //                System.out.println("좌석 " + seat + " 예약이 완료되었습니다.");
+                /*
                 List<SeatRequest> seatList = new ArrayList<>();
                 for (int i = 0; i < member.peopleCount; i++) {
                     System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
@@ -140,6 +156,23 @@ public class MainController {
                     char row = seatInput.charAt(0);
                     int col = Integer.parseInt(seatInput.substring(1));
                     seatList.add(new SeatRequest(row, col));
+                } */
+
+                List<SeatRequest> seatList = new ArrayList<>();
+                for (int i = 0; i < member.peopleCount; i++) {
+                    while (true) {
+                        System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
+                        String seatInput = scanner.nextLine().trim().toUpperCase();
+                        if (reservedSeats.contains(seatInput)) {
+                            System.out.println("이미 예약된 좌석입니다. 다른 좌석을 선택하세요.");
+                            continue;
+                        }
+                        char row = seatInput.charAt(0);
+                        int col = Integer.parseInt(seatInput.substring(1));
+                        seatList.add(new SeatRequest(row, col));
+                        reservedSeats.add(seatInput); // 지금 선택한 것도 예약 예정으로 추가(중복입력 방지)
+                        break;
+                    }
                 }
 
                 // 결제 단계

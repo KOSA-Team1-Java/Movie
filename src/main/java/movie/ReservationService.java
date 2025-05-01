@@ -20,7 +20,7 @@ public class ReservationService {
         }
         // 2. 좌석 정보 등록
         for (SeatRequest seat : seatList) {
-            reservationRepository.insertSeat(reservationId, seat.getRow(), seat.getCol());
+            reservationRepository.insertReservationSeat(reservationId, seat.getRow(), seat.getCol());
         }
         // 3. 예산 차감
         member.decreaseBudget(price);

@@ -1,6 +1,8 @@
 package movie;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static JDBC.ConnectionConst.*;
 
@@ -25,8 +27,8 @@ public class ReservationRepository {
     }
 
     // 좌석 예약 insert
-    public void insertSeat(int reservationId, char seatRow, int seatCol) {
-        String sql = "INSERT INTO seat (reservation_id, reservation_seat_row, reservation_seat_col) VALUES (?, ?, ?)";
+    public void insertReservationSeat(int reservationId, char seatRow, int seatCol) {
+        String sql = "INSERT INTO reservationseat (reservation_id, seat_row, seat_col) VALUES (?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, reservationId);
@@ -37,4 +39,44 @@ public class ReservationRepository {
             e.printStackTrace();
         }
     }
+
+    public List<String> findReservedSeatsByScreeningId(int screeningId) {
+        List<String> reservedSeats = new ArrayList<>();
+        String sql = "SELECT rs.seat_row, rs.seat_col " +
+                "FROM reservation r " +
+                "JOIN reservationseat rs ON r.id = rs.reservation_id " +
+                "WHERE r.screening_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, screeningId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String seatCode = rs.getString("seat_row") + rs.getInt("seat_col");
+                    reservedSeats.add(seatCode);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservedSeats;
+    }
+
+    public int countReservedSeatsByScreeningId(int screeningId) {
+        String sql = "SELECT COUNT(*) FROM reservation r " +
+                "JOIN reservationseat rs ON r.id = rs.reservation_id " +
+                "WHERE r.screening_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, screeningId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }
