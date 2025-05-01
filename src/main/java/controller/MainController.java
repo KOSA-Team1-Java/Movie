@@ -46,14 +46,20 @@ public class MainController {
                 String password1 = scanner.nextLine();
                 try {
                     member = memberService.login(id1, password1);
+                    System.out.println(member.getName() + "님 로그인 되셨습니다");
                 } catch (Exception e) {
                     exceptionController.loginError(e);
                 }
                 break;
 
             case "/logout":
-                member = null;
-                break;
+                if (member == null) {
+                    break;
+                }else {
+                    System.out.println(member.getName() + "님 로그아웃 되셨습니다");
+                    member = null;
+                    break;
+                }
 
             case "/res":
                 // 1단계: 영화 목록 출력
@@ -96,7 +102,7 @@ public class MainController {
 
                 System.out.println("선택한 영화 상영 시간대");
                 for (Screening s : screenings) {
-                    System.out.println("번호: " +s.getId());
+                    System.out.println("번호: " + s.getId());
                     System.out.println("시간: " + s.getStartTime() + " ~ " + s.getEndTime());
                     System.out.println("이용가능 좌석: " + s.getAvailableSeats());
                     System.out.println("-------------------------------");
@@ -147,6 +153,7 @@ public class MainController {
                 } else {
                     System.out.println("❌ 예매 실패.");
                 }
+
 
             case "2":
                 System.out.println("Exit.");
