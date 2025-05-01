@@ -9,7 +9,7 @@ import java.util.List;
 public class Movie {
     private int id;
     private String title;
-    private int price;
+    private int price = 15000;
     private List<Screening> screenings;
 
     public Movie(int id, String title) {

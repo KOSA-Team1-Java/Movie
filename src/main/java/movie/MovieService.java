@@ -19,25 +19,25 @@ public class MovieService {
         try {
             PrintStream printStream = new PrintStream(System.out, true, "UTF-8");
             List<String> movies = movieRepository.getMovies();
-            for (String movie : movies) {
-                printStream.println(movie);
+            for (int i = 0; i< movies.size(); i++) {
+                printStream.println(i+1 + "." +movies.get(i));
             }
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // 2단계: 해당 영화의 상영 정보 전체 출력
-    public void showScreening(int movieId) {
-        List<Screening> screenings = movieRepository.getScreenings(movieId);
-        for (Screening screening : screenings) {
-            System.out.println("영화 번호: " + screening.getId());
-            System.out.println("영화관: " + screening.getTheater().getLocation());
-            System.out.println("시간: " + screening.getScreeningDate());
-            System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
-            System.out.println("-------------------------------");
-        }
-    }
+//    // 2단계: 해당 영화의 상영 정보 전체 출력
+//    public void showScreening(int movieId) {
+//        List<Screening> screenings = movieRepository.getScreenings(movieId);
+//        for (Screening screening : screenings) {
+//            System.out.println("영화 번호: " + screening.getId());
+//            System.out.println("영화관: " + screening.getTheater().getLocation());
+//            System.out.println("시간: " + screening.getScreeningDate());
+//            System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
+//            System.out.println("-------------------------------");
+//        }
+//    }
 
     // 3단계 : 영화 ID로 지역 목록 반환 (중복 제거)
     public List<String> getLocationsByMovieId(int movieId) {

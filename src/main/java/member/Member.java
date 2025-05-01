@@ -26,4 +26,9 @@ public class Member {
     public void addPaymentHistory(int amount) {
         this.paymentHistory.add(amount);
     }
+
+    public void decreaseBudget(int price) {
+        this.budget = budget;
+    }
+
 }
