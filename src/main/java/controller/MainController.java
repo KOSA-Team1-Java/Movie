@@ -1,10 +1,8 @@
 package controller;
 
-import command.Command;
-import command.LoginCommand;
-import command.ReservationCommand;
-import command.SignUpCommand;
+import command.*;
 import exception.ExceptionController;
+import member.Member;
 import member.MemberService;
 import movie.MovieService;
 
@@ -14,56 +12,36 @@ import java.util.Scanner;
 
 public class MainController {
 
-    private final MemberService memberService;
-    private final MovieService movieService;
-    private final ExceptionController exceptionController;
+
     private final Map<String, Command> commandMap = new HashMap<>();
-    private static final Scanner scanner = new Scanner(System.in);
+    private Member loginMember = null;
+    public Member getLoginMember() { return loginMember; }
+    public void setLoginMember(Member m) { loginMember = m; }
+    public boolean isLoggedIn() { return loginMember != null; }
 
-    public MainController(MemberService memberService, MovieService movieService, ExceptionController exceptionController) {
-        this.memberService = memberService;
-        this.movieService = movieService;
-        this.exceptionController = exceptionController;
-        initCommands();
-    }
-
-    public void initCommands() {
+    public MainController(MemberService memberService, MovieService movieService, ExceptionController exceptionController, Scanner scanner) {
         commandMap.put("/signup", new SignUpCommand(memberService, exceptionController, scanner));
         commandMap.put("/login", new LoginCommand(memberService, exceptionController, scanner));
+        commandMap.put("/logout", new LogoutCommand());
         commandMap.put("/res", new ReservationCommand(memberService, movieService, exceptionController, scanner));
-        // ... 추가 커맨드
     }
 
-    public boolean call(String command, boolean login) {
+    public void call(String command) {
         Command inputCmd = commandMap.get(command);
+        Command cmd = commandMap.get(command);
+        if (cmd == null) {
+            System.out.println("올바른 명령어를 입력해주세요.");
+            return;
+        }
+        if (cmd.requiresLogin() && !isLoggedIn()) {
+            System.out.println("로그인이 필요한 기능입니다.");
+            return;
+        }
+        if (cmd.requiresLogout() && isLoggedIn()) {
+            System.out.println("이미 로그인 중입니다. 로그아웃 후 이용하세요.");
+            return;
+        }
+        cmd.execute(this); // 상태 변화는 각 command 내부에서 setLoginMember 등
 
-        if (command.equals("/signup")) {
-            inputCmd.execute();
-            System.out.println("회원가입 완료");
-            return false;
-        }
-        if (command.equals("/login")) {
-            boolean success = inputCmd.executeReturnBoolean();
-            return success;
-        }
-        if (command.equals("/logout")) {
-            if (login) {
-                System.out.println("로그아웃 완료");
-                return true;
-            } else {
-                System.out.println("로그인 상태가 아닙니다");
-                return false;
-            }
-        }
-        if (command.equals("/res")) {
-            if (!login) {
-                System.out.println("로그인이 필요한 기능입니다");
-                return false;
-            }
-            inputCmd.execute();
-            return false;
-        }
-        System.out.println("올바른 명령어를 입력해주세요.");
-        return false;
     }
 }

@@ -1,5 +1,6 @@
 package command;
 
+import controller.MainController;
 import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
@@ -29,7 +30,7 @@ public class ReservationCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public boolean execute(MainController context) {
         // 1단계: 영화 목록 출력
         movieService.showMovie();
         System.out.print("예매할 영화 번호 : ");
@@ -40,7 +41,7 @@ public class ReservationCommand implements Command {
         List<String> locations = movieService.getLocationsByMovieId(movieId);
         if (locations.isEmpty()) {
             System.out.println("No available locations for this movie.");
-            return;
+            return false;
         }
 
         // 영화관 위치 출력 (번호로 선택)
@@ -55,7 +56,7 @@ public class ReservationCommand implements Command {
 
         if (locationChoice < 1 || locationChoice > locations.size()) {
             System.out.println("Invalid location number.");
-            return;
+            return false;
         }
 
         String selectedLocation = locations.get(locationChoice - 1);
@@ -64,7 +65,7 @@ public class ReservationCommand implements Command {
         List<Screening> screenings = movieService.getScreeningsByMovieAndLocation(movieId, selectedLocation);
         if (screenings.isEmpty()) {
             System.out.println("No screenings available for this location.");
-            return;
+            return false;
         }
 
         System.out.println("선택한 영화 상영 시간대");
@@ -87,7 +88,7 @@ public class ReservationCommand implements Command {
 
         if (selectedScreening == null) {
             System.out.println("Invalid screening ID.");
-            return;
+            return false;
         }
 
         // 5단계: 선택된 상영 정보 출력
@@ -122,5 +123,9 @@ public class ReservationCommand implements Command {
         }
 
         System.out.println("✅ 결제가 완료되었습니다.");
+        return true;
     }
+
+    @Override
+    public boolean requiresLogout() { return true; }
 }

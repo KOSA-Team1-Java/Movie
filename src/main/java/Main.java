@@ -20,10 +20,8 @@ public class Main {
         MovieRepository movieRepository = new MovieRepository();
         MovieService movieService = new MovieService(movieRepository);
         ExceptionController exceptionController = new ExceptionController();
-        MainController mainController = new MainController(memberService, movieService, exceptionController);
+        MainController mainController = new MainController(memberService, movieService, exceptionController, scanner);
 
-        boolean login = false;
-        
         printStream.println("🎞️🎬🎥📽️1조 영화관에 오신 걸 환영합니다.");
         
         while (true) {
@@ -35,11 +33,7 @@ public class Main {
                 printStream.println("안녕히 가세요.");
                 break;
             }
-
-            boolean result = mainController.call(input, login);
-            // 로그인/로그아웃 전환
-            if (input.equals("/login") && result) login = true;
-            if (input.equals("/logout") && result) login = false;
+            mainController.call(input);
         }
         printStream.close();
     }

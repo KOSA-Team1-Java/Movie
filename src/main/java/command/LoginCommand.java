@@ -1,5 +1,6 @@
 package command;
 
+import controller.MainController;
 import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
@@ -19,23 +20,24 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute() {
-        executeReturnBoolean();
-    }
-
-    @Override
-    public boolean executeReturnBoolean() {
+    public boolean execute(MainController context) {
         System.out.print("ID : ");
         String id = scanner.nextLine();
         System.out.print("Password : ");
         String password = scanner.nextLine();
         try {
             member = memberService.login(id, password);
+            context.setLoginMember(member);
             System.out.println(member.getName() + "님 로그인 되셨습니다.");
             return true;
         } catch (Exception e) {
             exceptionController.loginError(e);
             return false;
         }
+    }
+
+    @Override
+    public boolean requiresLogout() {
+        return true;
     }
 }
