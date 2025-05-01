@@ -63,7 +63,6 @@ public class MainController {
 
             case "/res":
                 // 1단계: 영화 목록 출력
-                System.out.println("로그인성공!!");
                 movieService.showMovie();
                 System.out.print("예매할 영화 번호 : ");
                 int movieId = scanner.nextInt(); // 영화 번호 입력
@@ -154,6 +153,7 @@ public class MainController {
                     System.out.println("❌ 예매 실패.");
                 }
 
+                System.out.println("✅ 결제가 완료되었습니다.");
 
             case "2":
                 System.out.println("Exit.");

@@ -23,8 +23,8 @@ public class Screening {
         this.startTime = startTime;
         this.endTime = endTime;
         this.theater = theater;
-        this.totalSeats = totalSeats;
-        this.availableSeats = availableSeats;
+        this.totalSeats = 100;
+        this.availableSeats = totalSeats;
     }
 
 
