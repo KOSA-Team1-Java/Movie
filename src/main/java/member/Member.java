@@ -12,7 +12,7 @@ public class Member {
     private String password;
     private String name;
     private int age;
-    private int budget = 100000;
+    private int budget =100000;
 
     private List<Integer> paymentHistory = new ArrayList<>();
 
@@ -21,6 +21,7 @@ public class Member {
         this.password = password;
         this.name = name;
         this.age = age;
+
     }
 
     public void addPaymentHistory(int amount) {
