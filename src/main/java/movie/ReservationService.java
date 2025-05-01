@@ -72,7 +72,7 @@ public class ReservationService {
 
             // 2. 좌석 등록
             for (SeatRequest seat : seatList) {
-                reservationRepository.insertSeat(conn, reservationId, seat.getRow(), seat.getCol());
+                reservationRepository.ReservationinsertSeat(conn, reservationId, seat.getRow(), seat.getCol());
             }
 
             // 3. 예산 차감 및 DB 반영
