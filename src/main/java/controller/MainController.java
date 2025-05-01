@@ -159,7 +159,17 @@ public class MainController {
                         System.out.println("날짜: " + selectedScreening.getScreeningDate());
                         System.out.println("시간: " + selectedScreening.getStartTime() + " ~ " + selectedScreening.getEndTime());
                         System.out.println("영화관: " + selectedScreening.getTheater().getLocation());
-                        //예매 좌석
+                        System.out.println("총 인원: " + peopleCount);
+
+                        System.out.print("좌석: ");
+                        for (int i = 0; i < seatList.size(); i++) {
+                            SeatRequest seat = seatList.get(i);
+                            System.out.print(seat.getRow() + "열 " + seat.getCol() + "번");
+                            if (i < seatList.size() - 1) {
+                                System.out.print(", ");
+                            }
+                        }
+                        System.out.println();   //줄 바꿈
                         System.out.println("-----------------------------");
                     }
                 } else {
