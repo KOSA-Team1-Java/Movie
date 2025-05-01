@@ -36,7 +36,7 @@ public class ReservationService {
             return false;
         }
 
-        System.out.println("결제 수단을 선택하세요.(1.카드 / 2.현금)");
+        System.out.print("결제 수단을 선택하세요.(1.카드 / 2.현금): ");
         int payOption = scanner.nextInt();
         scanner.nextLine();
 

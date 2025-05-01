@@ -34,7 +34,7 @@ public class ReservationRepository {
 
     // 좌석(Seat) insert
     public void insertSeat(Connection conn, int reservationId, char seatRow, int seatCol) throws SQLException {
-        String sql = "INSERT INTO seat (reservation_id, reservation_seat_row, reservation_seat_col) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO ReservationSeat (reservation_id, seat_row, seat_col) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, reservationId);
             pstmt.setString(2, String.valueOf(seatRow));

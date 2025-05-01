@@ -151,7 +151,7 @@ public class MainController {
                 if (success) {
                     System.out.println("✅ 예매 성공!");
                     System.out.println("💳 남은 예산: " + member.getBudget() + "원");
-                    System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기)");
+                    System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기) : ");
                     String viewChoice = scanner.nextLine();
                     if(viewChoice.equals("1")){
                         System.out.println("-------------예매내역 조회-------------");
