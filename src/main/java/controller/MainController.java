@@ -5,9 +5,6 @@ import member.Member;
 import member.MemberRepository;
 import member.MemberService;
 import movie.*;
-import pay.CashPay;
-import pay.CreditPay;
-import pay.Pay;
 
 import java.util.ArrayList;
 import java.util.List;
