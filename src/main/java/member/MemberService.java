@@ -42,10 +42,11 @@ public class MemberService {
             return;
         }
 
-        int result = payMethod.pay(amount);
-        if(result != 0) {
+        boolean success = payMethod.pay(member, amount);
+        if (!success) {
             throw new MovieException("결제 실패: 잔액 부족");
         }
+        member.addPaymentHistory(amount);
 //        payMethod.pay(amount);
 //        // 예시: 금액 차감 로직 (예시용)
 //        member.budget -= amount;
