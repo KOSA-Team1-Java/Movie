@@ -17,8 +17,7 @@ public class Main {
             printStream.print("입력 : ");
             String input = scanner.nextLine();
             if(input.equals("/exit")) {
-                System.out.println("감사합니다!");
-                printStream.println("안녕히 가세요!");
+                System.out.println("이용해주셔서 감사합니다!");
                 break;
             }
             if (login == false && input.equals("/signup")) {

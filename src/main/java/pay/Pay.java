@@ -1,5 +1,7 @@
 package pay;
 
+import member.Member;
+
 public interface Pay {
-    int pay(int price);
+    boolean pay(Member member, int amount);
 }
