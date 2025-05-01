@@ -16,7 +16,6 @@ public class Member {
 
     private List<Integer> paymentHistory = new ArrayList<>();
 
-    // 회원 생성자
     public Member(String loginId, String password, String name, int age) {
         this.loginId = loginId;
         this.password = password;

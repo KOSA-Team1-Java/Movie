@@ -27,5 +27,4 @@ public class Screening {
         this.availableSeats = totalSeats;
     }
 
-
 }
