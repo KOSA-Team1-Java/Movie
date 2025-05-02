@@ -26,6 +26,11 @@ public class MovieService {
             throw new RuntimeException(e);
         }
     }
+    // 1-1 단계 :
+    public Movie getMovieById(int movieId) {
+        // MovieRepository에서 movieId로 Movie 객체 찾아 반환
+        return movieRepository.findById(movieId); // 실제 구현 구조에 따라 다름
+    }
 
     // 2단계 : 영화 ID로 지역 목록 반환 (중복 제거)
     public List<String> getLocationsByMovieId(int movieId) {
@@ -43,4 +48,20 @@ public class MovieService {
         return screenings;
     }
 
+    // 4 단계 : 지역을 선택한 후 상영 정보 출력
+    public void showScreeningByLocation(int movieId, String location) {
+        List<Screening> screenings = getScreeningsByMovieAndLocation(movieId, location);
+
+        if (screenings.isEmpty()) {
+            System.out.println("No screenings available for this movie at this location.");
+        } else {
+            for (Screening screening : screenings) {
+                System.out.println("Screening ID: " + screening.getId());
+                System.out.println("Theater: " + screening.getTheater().getLocation() + " " + screening.getTheater());
+                System.out.println("Day: " + screening.getScreeningDate());
+                System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
+                System.out.println("-------------------------------");
+            }
+        }
+    }
 }

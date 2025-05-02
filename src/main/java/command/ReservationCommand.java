@@ -45,10 +45,23 @@ public class ReservationCommand implements Command {
         int movieId = scanner.nextInt(); // 영화 번호 입력
         scanner.nextLine(); // Consume newline
 
+        // 1-1 영화 정보(객체) 가져오기 (MovieService/Repository에서 Movie 객체 반환)
+        Movie selectedMovie = movieService.getMovieById(movieId);
+        if (selectedMovie == null) {
+            System.out.println("올바른 영화 번호가 아닙니다.");
+            return false;
+        }
+
+//         1.2 나이 제한 체크!
+        if (selectedMovie.getAge() != 0 && member.getAge() < selectedMovie.getAge()) {
+            System.out.println("❌ 청소년 관람불가 영화입니다. 예매하실 수 없습니다.");
+            return false;
+        }
+
         // 2단계: 영화 번호에 따른 영화관 위치 출력
         List<String> locations = movieService.getLocationsByMovieId(movieId);
         if (locations.isEmpty()) {
-            System.out.println("No available locations for this movie.");
+            System.out.println("올바른 영화 번호가 아닙니다.");
             return false;
         }
 
@@ -63,7 +76,7 @@ public class ReservationCommand implements Command {
         scanner.nextLine(); // Consume newline
 
         if (locationChoice < 1 || locationChoice > locations.size()) {
-            System.out.println("Invalid location number.");
+            System.out.println("올바른 영화관 번호가 아닙니다.");
             return false;
         }
 
@@ -72,15 +85,16 @@ public class ReservationCommand implements Command {
         // 3단계: 선택한 장소에 따른 상영 시간대 출력
         List<Screening> screenings = movieService.getScreeningsByMovieAndLocation(movieId, selectedLocation);
         if (screenings.isEmpty()) {
-            System.out.println("No screenings available for this location.");
+            System.out.println("올바른 영화 시간대가 아닙니다.");
             return false;
         }
 
         System.out.println("선택한 영화 상영 시간대");
-        for (Screening s : screenings) {
-            System.out.println("번호: " + s.getId());
+        for (int i = 0; i < screenings.size(); i++) {
+            Screening s = screenings.get(i);
+            System.out.println("번호: " + (i + 1));
             System.out.println("시간: " + s.getStartTime() + " ~ " + s.getEndTime());
-//            System.out.println("이용가능 좌석: " + s.getAvailableSeats());
+            System.out.println("이용가능 좌석: " + s.getAvailableSeats());
             System.out.println("-------------------------------");
         }
 

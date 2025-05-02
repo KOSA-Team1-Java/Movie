@@ -10,5 +10,5 @@ public class LogoutCommand implements Command {
         return true;
     }
     @Override
-    public boolean requiresLogout() { return false; } // 로그인 상태에서만 실행 허용
+    public boolean needsLogin() { return true; } // 로그인 상태에서만 실행 허용
 }
