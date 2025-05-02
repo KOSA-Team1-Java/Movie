@@ -9,6 +9,10 @@ public class LogoutCommand implements Command {
         System.out.println("로그아웃 성공");
         return true;
     }
+
     @Override
-    public boolean needsLogin() { return true; } // 로그인 상태에서만 실행 허용
+    public boolean requiresLogin() {return true; }
+
+    @Override
+    public boolean requiresLogout() { return false; }
 }

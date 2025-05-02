@@ -23,7 +23,8 @@ public class MainController {
         commandMap.put("/signup", new SignUpCommand(memberService, exceptionController, scanner));
         commandMap.put("/login", new LoginCommand(memberService, exceptionController, scanner));
         commandMap.put("/logout", new LogoutCommand());
-        commandMap.put("/res", new ReservationCommand(memberService, movieService, exceptionController, scanner));
+        commandMap.put("/book", new ReservationCommand(memberService, movieService, exceptionController, scanner));
+        commandMap.put("/movie",new MoviesCommand(movieService, scanner));
         commandMap.put("/command", new CommandListCommand());
     }
 
