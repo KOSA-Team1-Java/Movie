@@ -1,7 +1,8 @@
-package movie;
+package reservation;
 
 import lombok.Getter;
 import member.Member;
+import movie.Screening;
 
 @Getter
 public class Reservation {

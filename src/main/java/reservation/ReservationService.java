@@ -1,6 +1,8 @@
-package movie;
+package reservation;
 
 import member.Member;
+import movie.Movie;
+import movie.SeatRequest;
 import pay.CashPay;
 import pay.CreditPay;
 import pay.Pay;

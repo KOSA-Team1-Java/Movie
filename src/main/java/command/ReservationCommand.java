@@ -5,6 +5,9 @@ import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
 import movie.*;
+import reservation.Reservation;
+import reservation.ReservationRepository;
+import reservation.ReservationService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,18 +103,15 @@ public class ReservationCommand implements Command {
 
         // 4단계: 상영 선택
         System.out.print("상영 번호를 입력하세요: ");
-        int screeningId = scanner.nextInt();
+        int screeningChoice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
-        Screening selectedScreening = screenings.stream()
-                .filter(s -> s.getId() == screeningId)
-                .findFirst()
-                .orElse(null);
-
-        if (selectedScreening == null) {
-            System.out.println("Invalid screening ID.");
+        if (screeningChoice < 1 || screeningChoice > screenings.size()) {
+            System.out.println("잘못된 상영 번호입니다.");
             return false;
         }
+        Screening selectedScreening = screenings.get(screeningChoice - 1); // 인덱스로 선택
+
 
         // 5단계: 선택된 상영 정보 출력
         System.out.println("✅ 선택하신 영화:");
