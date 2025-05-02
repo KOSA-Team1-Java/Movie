@@ -1,6 +1,5 @@
 package movie;
 
-
 public class SeatRequest {
     private char row;
     private int col;

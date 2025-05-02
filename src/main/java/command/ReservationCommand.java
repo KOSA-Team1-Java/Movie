@@ -4,14 +4,13 @@ import controller.MainController;
 import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
-import movie.Movie;
-import movie.MovieService;
-import movie.Reservation;
-import movie.Screening;
+import movie.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import static movie.PrintSeatMap.printSeatMap;
 
 public class ReservationCommand implements Command {
     private final MemberService memberService;
@@ -29,8 +28,17 @@ public class ReservationCommand implements Command {
         this.scanner = scanner;
     }
 
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
     @Override
     public boolean execute(MainController context) {
+        if (member == null) {
+            System.out.println("로그인된 사용자가 없습니다.");
+            return false;
+        }
+
         // 1단계: 영화 목록 출력
         movieService.showMovie();
         System.out.print("예매할 영화 번호 : ");
@@ -72,7 +80,7 @@ public class ReservationCommand implements Command {
         for (Screening s : screenings) {
             System.out.println("번호: " + s.getId());
             System.out.println("시간: " + s.getStartTime() + " ~ " + s.getEndTime());
-            System.out.println("이용가능 좌석: " + s.getAvailableSeats());
+//            System.out.println("이용가능 좌석: " + s.getAvailableSeats());
             System.out.println("-------------------------------");
         }
 
@@ -97,35 +105,69 @@ public class ReservationCommand implements Command {
         System.out.println("영화관: " + selectedScreening.getTheater().getLocation());
         System.out.println("날짜: " + selectedScreening.getScreeningDate());
         System.out.println("시간: " + selectedScreening.getStartTime() + " ~ " + selectedScreening.getEndTime());
-        System.out.println("이용가능좌석: " + selectedScreening.getAvailableSeats());
+//        System.out.println("이용가능좌석: " + selectedScreening.getAvailableSeats());
         System.out.println("-------------------------------");
 
         System.out.print("인원: ");
         int peopleCount = scanner.nextInt();
         scanner.nextLine();
 
+        ReservationRepository reservationRepository = new ReservationRepository();
+        List<String> reservedSeats = reservationRepository.findReservedSeatsByScreeningId(selectedScreening.getId());
+
+        // 좌석표 출력 함수
+        printSeatMap(reservedSeats);
+
         List<SeatRequest> seatList = new ArrayList<>();
         for (int i = 0; i < peopleCount; i++) {
-            System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
-            String seatInput = scanner.nextLine().trim().toUpperCase();
-            char row = seatInput.charAt(0);
-            int col = Integer.parseInt(seatInput.substring(1));
-            seatList.add(new SeatRequest(row, col));
+            while (true) {
+                System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
+                String seatInput = scanner.nextLine().trim().toUpperCase();
+                if (reservedSeats.contains(seatInput)) {
+                    System.out.println("이미 예약된 좌석입니다. 다른 좌석을 선택하세요.");
+                    continue;
+                }
+                char row = seatInput.charAt(0);
+                int col = Integer.parseInt(seatInput.substring(1));
+                seatList.add(new SeatRequest(row, col));
+                reservedSeats.add(seatInput); // 지금 선택한 것도 예약 예정으로 추가(중복입력 방지)
+                break;
+            }
         }
 
         ReservationService reservationService = new ReservationService();
         boolean success = reservationService.reserveMovie(member, selectedScreening.getMovie(), selectedScreening.getId(), seatList);
 
         if (success) {
-            System.out.println("✅ 예매 성공!");
-        } else {
-            System.out.println("❌ 예매 실패.");
+            System.out.println("💳 남은 예산: " + member.getBudget() + "원");
+            System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
+            String viewChoice = scanner.nextLine();
+
+            if(viewChoice.equals("1")){
+                System.out.println("-------------예매내역 조회-------------");
+                System.out.println("영화제목: " + selectedScreening.getMovie().getTitle());
+                System.out.println("날짜: " + selectedScreening.getScreeningDate());
+                System.out.println("시간: " + selectedScreening.getStartTime() + " ~ " + selectedScreening.getEndTime());
+                System.out.println("영화관: " + selectedScreening.getTheater().getLocation());
+                System.out.println("총 인원: " + peopleCount);
+
+                // 좌석 정보 출력
+                System.out.print("좌석: ");
+                for (int i = 0; i < seatList.size(); i++) {
+                    SeatRequest seat = seatList.get(i);
+                    System.out.print(seat.getRow() + "열 " + seat.getCol() + "번");
+                    if (i < seatList.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println(); // 줄바꿈
+                System.out.println("-----------------------------------");
+            }
         }
 
-        System.out.println("✅ 결제가 완료되었습니다.");
         return true;
     }
 
     @Override
-    public boolean requiresLogout() { return true; }
+    public boolean requiresLogout() { return false; }
 }

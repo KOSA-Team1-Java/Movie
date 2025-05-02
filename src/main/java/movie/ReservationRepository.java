@@ -11,9 +11,7 @@ public class ReservationRepository {
     // 예매(Reservation) insert. 생성된 ID 반환
     public int insertReservation(Connection conn, String memberLoginId, int screeningId) throws SQLException {
         String sql = "INSERT INTO reservation (member_loginId, screening_id) VALUES (?, ?)";
-//        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, memberLoginId);
             pstmt.setInt(2, screeningId);
             pstmt.executeUpdate();
