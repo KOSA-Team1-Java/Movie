@@ -37,11 +37,6 @@ public class ReservationCommand implements Command {
 
     @Override
     public boolean execute(MainController context) {
-        if (member == null) {
-            System.out.println("로그인된 사용자가 없습니다.");
-            return false;
-        }
-
         // 1단계: 영화 목록 출력
         movieService.showMovie();
         System.out.print("예매할 영화 번호 : ");
@@ -55,7 +50,7 @@ public class ReservationCommand implements Command {
             return false;
         }
 
-//         1.2 나이 제한 체크!
+        //1-2 나이 제한 체크!
         if (selectedMovie.getAge() != 0 && member.getAge() < selectedMovie.getAge()) {
             System.out.println("❌ 청소년 관람불가 영화입니다. 예매하실 수 없습니다.");
             return false;

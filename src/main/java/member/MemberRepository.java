@@ -20,7 +20,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
             System.out.println("successfully signup");
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new MovieException("회원가입 오류 입니다.");
         }
     }
 

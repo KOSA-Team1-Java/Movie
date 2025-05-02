@@ -12,10 +12,8 @@ import java.util.Scanner;
 
 public class MainController {
 
-
     private final Map<String, Command> commandMap = new HashMap<>();
     private Member loginMember = null;
-    public Member getLoginMember() { return loginMember; }
     public void setLoginMember(Member m) { loginMember = m; }
     public boolean isLoggedIn() { return loginMember != null; }
 
@@ -28,7 +26,6 @@ public class MainController {
     }
 
     public void call(String command) {
-        Command inputCmd = commandMap.get(command);
         Command cmd = commandMap.get(command);
         if (cmd == null) {
             System.out.println("올바른 명령어를 입력해주세요.");
@@ -53,6 +50,5 @@ public class MainController {
             }
         }
         cmd.execute(this); // 상태 변화는 각 command 내부에서 setLoginMember 등
-
     }
 }
