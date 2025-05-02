@@ -25,7 +25,7 @@ public class Main {
         printStream.println("🎞️🎬🎥📽️1조 영화관에 오신 걸 환영합니다.");
         
         while (true) {
-            printStream.println("/command : 사용할 수 있는 명령어 보기");
+            printStream.println("\n/command : 사용할 수 있는 명령어 보기");
             printStream.print("입력 : ");
             String input = scanner.nextLine();
             
