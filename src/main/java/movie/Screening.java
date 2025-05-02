@@ -16,15 +16,17 @@ public class Screening {
     private int totalSeats;
     private int availableSeats;
 
-    public Screening(int id, Movie movie, LocalDate screeningDate, LocalTime startTime, LocalTime endTime, Theater theater, int totalSeats, int availableSeats) {
+    public Screening(int id, Movie movie, LocalDate screeningDate, LocalTime startTime, LocalTime endTime, Theater theater) {
         this.id = id;
         this.movie = movie;
         this.screeningDate = screeningDate;
         this.startTime = startTime;
         this.endTime = endTime;
         this.theater = theater;
-        this.totalSeats = 100;
-        this.availableSeats = totalSeats;
+        this.totalSeats = theater.getTotalSeat();
+//        this.totalSeats = totalSeats;
+//        this.availableSeats = availableSeats;
     }
+    public int getTotalSeats() { return totalSeats; }
 
 }

@@ -36,27 +36,11 @@ public class MemberRepository {
                 String password = rs.getString("password");
                 String name = rs.getString("name");
                 int age = rs.getInt("age");
-                int budget = rs.getInt("budget");
-                Member member = new Member(id, password, name, age);
-                member.setBudget(budget);
-                return member;
+                return new Member(id, password, name, age);
             }
         } catch (SQLException e) {
             throw new MovieException(e);
         }
         return null;
-    }
-    public void updateBudget(Member member) {
-        String sql = "UPDATE member SET budget = ? WHERE loginid = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, member.getBudget());
-            pstmt.setString(2, member.getLoginId());
-
-            pstmt.executeUpdate();
-            System.out.println("💰 예산이 성공적으로 갱신되었습니다.");
-        } catch (SQLException e) {
-            throw new MovieException(e);
-        }
     }
 }

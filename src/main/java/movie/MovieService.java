@@ -26,13 +26,27 @@ public class MovieService {
             throw new RuntimeException(e);
         }
     }
+
     // 1-1 단계 :
     public Movie getMovieById(int movieId) {
         // MovieRepository에서 movieId로 Movie 객체 찾아 반환
         return movieRepository.findById(movieId); // 실제 구현 구조에 따라 다름
     }
 
-    // 2단계 : 영화 ID로 지역 목록 반환 (중복 제거)
+
+//    // 2단계: 해당 영화의 상영 정보 전체 출력
+//    public void showScreening(int movieId) {
+//        List<Screening> screenings = movieRepository.getScreenings(movieId);
+//        for (Screening screening : screenings) {
+//            System.out.println("영화 번호: " + screening.getId());
+//            System.out.println("영화관: " + screening.getTheater().getLocation());
+//            System.out.println("시간: " + screening.getScreeningDate());
+//            System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
+//            System.out.println("-------------------------------");
+//        }
+//    }
+
+    // 3단계 : 영화 ID로 지역 목록 반환 (중복 제거)
     public List<String> getLocationsByMovieId(int movieId) {
         List<Screening> screenings = movieRepository.getScreenings(movieId);
         return screenings.stream()
@@ -41,14 +55,14 @@ public class MovieService {
                 .collect(Collectors.toList());
     }
 
-    // 3 단계: 영화 ID + 지역으로 해당하는 상영 리스트 반환
+    // 4 단계: 영화 ID + 지역으로 해당하는 상영 리스트 반환
     public List<Screening> getScreeningsByMovieAndLocation(int movieId, String location) {
         // 지역 필터링
         List<Screening> screenings = movieRepository.findScreeningsByMovieAndLocation(movieId, location);
         return screenings;
     }
 
-    // 4 단계 : 지역을 선택한 후 상영 정보 출력
+    // 5 단계 : 지역을 선택한 후 상영 정보 출력
     public void showScreeningByLocation(int movieId, String location) {
         List<Screening> screenings = getScreeningsByMovieAndLocation(movieId, location);
 

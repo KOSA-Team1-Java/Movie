@@ -36,12 +36,8 @@ public class MemberService {
 
     public void veiwMyPage(){}
 
-    public void updateBudget(Member member) {
-        memberRepository.updateBudget(member);
-    }
-
     public void processPayment(Member member, Pay payMethod, int amount) {
-        if (member == null) {
+        if(member == null) {
             System.out.println("로그인 되어있지 않습니다.");
             return;
         }
@@ -50,11 +46,12 @@ public class MemberService {
         if (!success) {
             throw new MovieException("결제 실패: 잔액 부족");
         }
-
         member.addPaymentHistory(amount);
-        updateBudget(member);
+//        payMethod.pay(amount);
+//        // 예시: 금액 차감 로직 (예시용)
+//        member.budget -= amount;
+//        System.out.println("잔액: " + member.getBudget() + "원");
 
-        System.out.println("✅ 결제가 완료되었습니다. 남은 예산: " + member.getBudget() + "원");
+        member.addPaymentHistory(amount); // 회원 결제 내역 저장
     }
-
 }
