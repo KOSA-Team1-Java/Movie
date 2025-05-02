@@ -41,6 +41,16 @@ public class MainController {
             System.out.println("이미 로그인 중입니다. 로그아웃 후 이용하세요.");
             return;
         }
+        // 로그인된 회원 정보가 필요한 경우, 해당 정보를 ReservationCommand에 전달
+        if (cmd instanceof ReservationCommand) {
+            // 로그인 상태일 경우만 `ReservationCommand`를 처리하도록 수정
+            if (isLoggedIn()) {
+                ((ReservationCommand) cmd).setMember(loginMember);
+            } else {
+                System.out.println("로그인 상태에서만 예매할 수 있습니다.");
+                return;
+            }
+        }
         cmd.execute(this); // 상태 변화는 각 command 내부에서 setLoginMember 등
 
     }

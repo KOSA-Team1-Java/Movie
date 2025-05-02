@@ -27,6 +27,13 @@ public class MovieService {
         }
     }
 
+    // 1-1 단계 :
+    public Movie getMovieById(int movieId) {
+        // MovieRepository에서 movieId로 Movie 객체 찾아 반환
+        return movieRepository.findById(movieId); // 실제 구현 구조에 따라 다름
+    }
+
+
 //    // 2단계: 해당 영화의 상영 정보 전체 출력
 //    public void showScreening(int movieId) {
 //        List<Screening> screenings = movieRepository.getScreenings(movieId);

@@ -27,6 +27,31 @@ public class MovieRepository {
         return null;
     }
 
+    // findById는 movieId로 하나의 Movie만 조회
+    public Movie findById(int movieId) {
+        String sql = "SELECT id, title, price, age FROM movie WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, movieId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int id = rs.getInt("id");
+                    String title = rs.getString("title");
+                    int price = rs.getInt("price");
+                    int age = rs.getInt("age");
+                    Movie movie = new Movie(id, title, price, age); // 생성자에 price/age 추가되어 있으면 거기에 맞게 생성
+                    movie.setPrice(price); // setPrice/setAge 필요
+                    movie.setAge(age);
+                    return movie;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     // 영화 ID로 상영 정보 조회
     public List<Screening> getScreenings(int movieId) {
         List<Screening> screenings = new ArrayList<>();
@@ -51,7 +76,7 @@ public class MovieRepository {
                 LocalTime endTime = rs.getTime("endTime").toLocalTime();
                 int theaterId = rs.getInt("theater_id");
 
-                Movie movie = new Movie(movieId, movieTitle);
+                Movie movie = new Movie(movieId, movieTitle, 15000, 0);
                 Theater theater = new Theater(theaterId, location); // seat_row, seat_col 생략 가능
                 screenings.add(new Screening(screeningId, movie, screeningDate, startTime, endTime, theater, 0, 0));
             }
@@ -87,7 +112,7 @@ public class MovieRepository {
                 LocalTime endTime = rs.getTime("endTime").toLocalTime();
                 int theaterId = rs.getInt("theater_id");
 
-                Movie movie = new Movie(movieId, movieTitle);
+                Movie movie = new Movie(movieId, movieTitle, 15000, 0);
                 Theater theater = new Theater(theaterId, loc);
                 screenings.add(new Screening(screeningId, movie, screeningDate, startTime, endTime, theater, 0, 0));
             }

@@ -1,5 +1,6 @@
 package command;
 
+import controller.MainController;
 import exception.ExceptionController;
 import member.MemberService;
 
@@ -18,7 +19,7 @@ public class SignUpCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public  boolean execute(MainController context){
         System.out.print("ID : ");
         String id = scanner.nextLine();
         System.out.print("Password : ");
@@ -29,8 +30,10 @@ public class SignUpCommand implements Command {
         int age = scanner.nextInt();
         try {
             memberService.signUp(id, password, name, age);
+            return true;
         } catch (Exception e) {
             exceptionController.signUpError(e);
+            return false;
         }
     }
 }

@@ -1,23 +1,23 @@
 package movie;
 
-import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
-
-@Getter
 public class Movie {
     private int id;
     private String title;
-    private int price = 15000;
-    private List<Screening> screenings;
+    private int price;
+    private int age;
 
-    public Movie(int id, String title) {
+    public Movie(int id, String title, int price, int age) {
         this.id = id;
         this.title = title;
+        this.price = price;
+        this.age = age;
     }
 
-    public int getPrice() {
-        return this.price;
-    }
+    // 게터/세터
+    public int getId() { return id; }
+    public String getTitle() { return title; }
+    public int getPrice() { return price; }
+    public int getAge() { return age; }
+    public void setPrice(int price) { this.price = price; }
+    public void setAge(int age) { this.age = age; }
 }
