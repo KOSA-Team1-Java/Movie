@@ -1,7 +1,9 @@
 package movie;
 
+import lombok.Getter;
 import member.Member;
 
+@Getter
 public class Reservation {
     private int id;
     private Screening screening;
@@ -21,27 +23,6 @@ public class Reservation {
     // 총 결제 금액 계산 (영화 가격 * 인원 수)
     private int calculateTotalPrice() {
         return screening.getMovie().getPrice() * peopleCount;
-    }
-
-    // Getter 메서드들
-    public int getId() {
-        return id;
-    }
-
-    public Screening getScreening() {
-        return screening;
-    }
-
-    public int getPeopleCount() {
-        return peopleCount;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public int getTotalPrice() {
-        return totalPrice;
     }
 
     // 예산 차감 처리 메서드

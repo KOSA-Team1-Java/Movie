@@ -23,18 +23,10 @@ public class MemberService {
         }
         String hashPassword = PasswordHasher.hash(password);
         if (!member.getPassword().equals(hashPassword)) {
-            throw new MovieException("비밀번호가 일치하지 않습니다."); // 로그인 성공
+            throw new MovieException("존재하지 않는 회원입니다.");
         }
         return member;
     }
-
-    public void logout() {}
-
-    public void bookMovie() {}
-
-    public void viewReservation() {}
-
-    public void veiwMyPage(){}
 
     public void updateBudget(Member member) {
         memberRepository.updateBudget(member);

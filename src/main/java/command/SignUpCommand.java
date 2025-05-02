@@ -39,4 +39,9 @@ public class SignUpCommand implements Command {
             return false;
         }
     }
+
+    @Override
+    public boolean requiresLogout() {
+        return true;
+    }
 }

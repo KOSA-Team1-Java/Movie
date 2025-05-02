@@ -183,5 +183,7 @@ public class ReservationCommand implements Command {
     }
 
     @Override
-    public boolean requiresLogout() { return false; }
+    public boolean requiresLogin() {
+        return true;
+    }
 }
