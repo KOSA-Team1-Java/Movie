@@ -1,5 +1,8 @@
 package movie;
 
+import lombok.Getter;
+
+@Getter
 public class Theater {
     private int id;
     private String location;
@@ -10,14 +13,4 @@ public class Theater {
         this.location = location;
         this.totalSeat = totalSeat;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public int getTotalSeat() { return totalSeat;}
 }

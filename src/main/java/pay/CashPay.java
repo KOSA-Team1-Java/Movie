@@ -3,13 +3,22 @@ package pay;
 import member.Member;
 
 public class CashPay implements Pay {
+
+    private Member member;
+    private int amount;
+
+    public CashPay(Member member, int amount) {
+        this.member = member;
+        this.amount = amount;
+    }
+
     @Override
-    public boolean pay(Member member, int amount) {
-        if (member.getBudget() >= amount) {
-            member.decreaseBudget(amount);
+    public int pay() {
+        if (member.getCash() >= amount) {
+            member.decreaseCash(amount);
             System.out.println("💵 현금 결제가 완료되었습니다.");
-            return true;
+            return member.getCash();
         }
-        return false;
+        return 0;
     }
 }

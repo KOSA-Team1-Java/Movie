@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static JDBC.ConnectionConst.*;
+import static util.ConnectionConst.*;
 
 public class ReservationRepository {
 

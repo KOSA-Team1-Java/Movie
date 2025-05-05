@@ -1,10 +1,11 @@
 package member;
 
 import exception.MovieException;
+import util.PasswordHasher;
 
 import java.sql.*;
 
-import static JDBC.ConnectionConst.*;
+import static util.ConnectionConst.*;
 
 public class MemberRepository {
 

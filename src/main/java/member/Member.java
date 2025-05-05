@@ -12,7 +12,8 @@ public class Member {
     private String password;
     private String name;
     private int age;
-    private int budget = 100000; // 기본 예산 100,000원
+    private int cash = 100000; // 현금 예산 100,000원
+    private int credit = 100000; // 카드 예산 100,000원
 
     private List<Integer> paymentHistory = new ArrayList<>();
 
@@ -28,21 +29,32 @@ public class Member {
         this.paymentHistory.add(amount);
     }
 
-    public void decreaseBudget(int amount) {
+    public void decreaseCash(int amount) {
         if (amount <= 0) {
             System.out.println("❌ 차감할 금액은 0보다 커야 합니다.");
             return;
         }
-
-        if (this.budget < amount) {
+        if (this.cash < amount) {
             System.out.println("❌ 예산이 부족하여 차감할 수 없습니다.");
             return;
         }
-        this.budget -= amount;
+        this.cash -= amount;
+    }
+
+    public void decreaseCredit(int amount) {
+        if (amount <= 0) {
+            System.out.println("❌ 차감할 금액은 0보다 커야 합니다.");
+            return;
+        }
+        if (this.credit < amount) {
+            System.out.println("❌ 예산이 부족하여 차감할 수 없습니다.");
+            return;
+        }
+        this.credit -= amount;
     }
 
     // 예산 업데이트 메서드 (DB 업데이트용)
-    public void setBudget(int budget) {
-        this.budget = budget;
+    public void setCash(int cash) {
+        this.cash = cash;
     }
 }

@@ -9,6 +9,10 @@ public class ExceptionController {
         System.out.println("로그인 오류 : " + e.getMessage());
     }
     
+    public void sqlError(Exception e) {
+        System.out.println("SQL 오류 : " + e.getMessage());
+    }
+    
     public void reserveError(Exception e) {
         System.out.println("예약 중 오류 : " + e.getMessage());
     }

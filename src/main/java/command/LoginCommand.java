@@ -20,7 +20,7 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public boolean execute(MainController context) {
+    public void execute(MainController context) {
         System.out.print("ID : ");
         String id = scanner.nextLine();
         System.out.print("Password : ");
@@ -28,11 +28,9 @@ public class LoginCommand implements Command {
         try {
             member = memberService.login(id, password);
             context.setLoginMember(member);
-            System.out.println(member.getName() + "님 로그인 되셨습니다.");
-            return true;
+            System.out.println(member.getName() + "님 로그인 되었습니다.");
         } catch (Exception e) {
             exceptionController.loginError(e);
-            return false;
         }
     }
 

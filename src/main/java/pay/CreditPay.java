@@ -3,13 +3,22 @@ package pay;
 import member.Member;
 
 public class CreditPay implements Pay {
+
+    private Member member;
+    private int amount;
+
+    public CreditPay(Member member, int amount) {
+        this.member = member;
+        this.amount = amount;
+    }
+
     @Override
-    public boolean pay(Member member, int amount) {
-        if (member.getBudget() >= amount) {
-            member.decreaseBudget(amount);
+    public int pay() {
+        if (member.getCredit() >= amount) {
+            member.decreaseCredit(amount);
             System.out.println("💳 카드 결제가 완료되었습니다.");
-            return true;
+            return member.getCredit();
         }
-        return false;
+        return 0;
     }
 }

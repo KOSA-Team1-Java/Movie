@@ -19,7 +19,7 @@ public class SignUpCommand implements Command {
     }
 
     @Override
-    public  boolean execute(MainController context){
+    public  void execute(MainController context){
         System.out.print("ID : ");
         String id = scanner.nextLine();
         System.out.print("Password : ");
@@ -28,12 +28,11 @@ public class SignUpCommand implements Command {
         String name = scanner.nextLine();
         System.out.print("Age : ");
         int age = scanner.nextInt();
+        scanner.nextLine();
         try {
             memberService.signUp(id, password, name, age);
-            return true;
         } catch (Exception e) {
             exceptionController.signUpError(e);
-            return false;
         }
     }
 

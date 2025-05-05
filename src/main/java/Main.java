@@ -4,6 +4,8 @@ import member.MemberRepository;
 import member.MemberService;
 import movie.MovieRepository;
 import movie.MovieService;
+import reservation.ReservationRepository;
+import reservation.ReservationService;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -19,10 +21,12 @@ public class Main {
         MemberService memberService = new MemberService(memberRepository);
         MovieRepository movieRepository = new MovieRepository();
         MovieService movieService = new MovieService(movieRepository);
+        ReservationRepository reservationRepository = new ReservationRepository();
+        ReservationService reservationService = new ReservationService(reservationRepository);
         ExceptionController exceptionController = new ExceptionController();
-        MainController mainController = new MainController(memberService, movieService, exceptionController, scanner);
+        MainController mainController = new MainController(memberService, movieService, reservationService, exceptionController, scanner);
 
-        printStream.println("🎞️🎬🎥📽️1조 영화관에 오신 걸 환영합니다.");
+        printStream.println("🎞️🎬🎥📽️1조 영화관에 오신 걸 환영합니다.📽️🎥🎬🎞️");
         
         while (true) {
             printStream.println("/command : 사용할 수 있는 명령어 보기");

@@ -2,7 +2,6 @@ package movie;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,26 +26,18 @@ public class MovieService {
         }
     }
 
-    // 1-1 단계 :
-    public Movie getMovieById(int movieId) {
-        // MovieRepository에서 movieId로 Movie 객체 찾아 반환
-        return movieRepository.findById(movieId); // 실제 구현 구조에 따라 다름
+    // 1-1 단계
+    public Movie getMovieByTitle(String name) {
+        return movieRepository.findByTitle(name); // 실제 구현 구조에 따라 다름
     }
 
 
-//    // 2단계: 해당 영화의 상영 정보 전체 출력
-//    public void showScreening(int movieId) {
-//        List<Screening> screenings = movieRepository.getScreenings(movieId);
-//        for (Screening screening : screenings) {
-//            System.out.println("영화 번호: " + screening.getId());
-//            System.out.println("영화관: " + screening.getTheater().getLocation());
-//            System.out.println("시간: " + screening.getScreeningDate());
-//            System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
-//            System.out.println("-------------------------------");
-//        }
-//    }
+    public List<Screening> getScreenings(int movieId) {
+        return movieRepository.getScreenings(movieId);
+    }
 
-    // 3단계 : 영화 ID로 지역 목록 반환 (중복 제거)
+
+    // 2단계 : 영화 ID로 지역 목록 반환
     public List<String> getLocationsByMovieId(int movieId) {
         List<Screening> screenings = movieRepository.getScreenings(movieId);
         return screenings.stream()

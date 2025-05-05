@@ -15,8 +15,7 @@ public class MoviesCommand implements Command {
     }
 
     @Override
-    public boolean execute(MainController context) {
+    public void execute(MainController context) {
         movieService.showMovie();
-        return false;
     }
 }

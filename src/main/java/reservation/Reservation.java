@@ -7,10 +7,10 @@ import movie.Screening;
 @Getter
 public class Reservation {
     private int id;
+    private Member member;
     private Screening screening;
     private int peopleCount;
-    private Member member;
-    private int totalPrice;  // 총 결제 금액
+    private int totalPrice;  //결제 금액
 
     // 생성자
     public Reservation(int id, Screening screening, int peopleCount, Member member) {
@@ -28,6 +28,6 @@ public class Reservation {
 
     // 예산 차감 처리 메서드
     public void applyDiscount() {
-        member.decreaseBudget(totalPrice);
+        member.decreaseCash(totalPrice);
     }
 }
