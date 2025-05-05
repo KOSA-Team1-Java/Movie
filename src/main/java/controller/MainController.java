@@ -24,7 +24,6 @@ public class MainController {
         commandMap.put("/login", new LoginCommand(memberService, exceptionController, scanner));
         commandMap.put("/logout", new LogoutCommand());
         commandMap.put("/res", new ReservationCommand(memberService, movieService, exceptionController, scanner));
-        commandMap.put("/command", new CommandListCommand());
     }
 
     public void call(String command) {

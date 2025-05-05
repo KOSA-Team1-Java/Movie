@@ -42,11 +42,12 @@ public class MemberService {
         if (!success) {
             throw new MovieException("결제 실패: 잔액 부족");
         }
-
         member.addPaymentHistory(amount);
-        updateBudget(member);
+//        payMethod.pay(amount);
+//        // 예시: 금액 차감 로직 (예시용)
+//        member.budget -= amount;
+//        System.out.println("잔액: " + member.getBudget() + "원");
 
-        System.out.println("✅ 결제가 완료되었습니다. 남은 예산: " + member.getBudget() + "원");
+        member.addPaymentHistory(amount); // 회원 결제 내역 저장
     }
-
 }

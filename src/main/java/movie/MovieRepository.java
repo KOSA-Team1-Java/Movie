@@ -55,7 +55,7 @@ public class MovieRepository {
     // 영화 ID로 상영 정보 조회
     public List<Screening> getScreenings(int movieId) {
         List<Screening> screenings = new ArrayList<>();
-        String sql = "SELECT s.id AS screening_id, m.title AS movie_title, t.location, " +
+        String sql = "SELECT s.id AS screening_id, m.title AS movie_title, t.location, t.total_seat, " +
                 "s.screeningDate, s.startTime, s.endTime, t.id AS theater_id, t.seat_row, t.seat_col " +
                 "FROM screening s " +
                 "JOIN movie m ON s.movie_id = m.id " +
@@ -75,10 +75,11 @@ public class MovieRepository {
                 LocalTime startTime = rs.getTime("startTime").toLocalTime();
                 LocalTime endTime = rs.getTime("endTime").toLocalTime();
                 int theaterId = rs.getInt("theater_id");
+                int totalSeat = rs.getInt("total_seat");
 
                 Movie movie = new Movie(movieId, movieTitle, 15000, 0);
-                Theater theater = new Theater(theaterId, location); // seat_row, seat_col 생략 가능
-                screenings.add(new Screening(screeningId, movie, screeningDate, startTime, endTime, theater, 0, 0));
+                Theater theater = new Theater(theaterId, location, totalSeat); // seat_row, seat_col 생략 가능
+                screenings.add(new Screening(screeningId, movie, screeningDate, startTime, endTime, theater));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,7 +91,7 @@ public class MovieRepository {
     // 지역을 기준으로 상영 정보 조회
     public List<Screening> findScreeningsByMovieAndLocation(int movieId, String location) {
         List<Screening> screenings = new ArrayList<>();
-        String sql = "SELECT s.id AS screening_id, m.title AS movie_title, t.location, " +
+        String sql = "SELECT s.id AS screening_id, m.title AS movie_title, t.location, t.total_seat, " +
                 "s.screeningDate, s.startTime, s.endTime, t.id AS theater_id, t.seat_row, t.seat_col " +
                 "FROM screening s " +
                 "JOIN movie m ON s.movie_id = m.id " +
@@ -111,10 +112,11 @@ public class MovieRepository {
                 LocalTime startTime = rs.getTime("startTime").toLocalTime();
                 LocalTime endTime = rs.getTime("endTime").toLocalTime();
                 int theaterId = rs.getInt("theater_id");
+                int totalSeat = rs.getInt("total_seat");
 
                 Movie movie = new Movie(movieId, movieTitle, 15000, 0);
-                Theater theater = new Theater(theaterId, loc);
-                screenings.add(new Screening(screeningId, movie, screeningDate, startTime, endTime, theater, 0, 0));
+                Theater theater = new Theater(theaterId, loc, totalSeat);
+                screenings.add(new Screening(screeningId, movie, screeningDate, startTime, endTime, theater));
             }
         } catch (SQLException e) {
             e.printStackTrace();

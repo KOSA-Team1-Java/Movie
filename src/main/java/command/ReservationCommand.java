@@ -92,12 +92,27 @@ public class ReservationCommand implements Command {
             return false;
         }
 
+        ReservationRepository reservationRepository = new ReservationRepository();
+
+        /*
         System.out.println("선택한 영화 상영 시간대");
         for (int i = 0; i < screenings.size(); i++) {
             Screening s = screenings.get(i);
             System.out.println("번호: " + (i + 1));
             System.out.println("시간: " + s.getStartTime() + " ~ " + s.getEndTime());
             System.out.println("이용가능 좌석: " + s.getAvailableSeats());
+            System.out.println("-------------------------------");
+        }
+
+         */
+        for (int i = 0; i < screenings.size(); i++) {
+            Screening s = screenings.get(i);
+            // 1. 예약좌석 수를 동적으로 구함
+            int reservedSeats  = reservationRepository.countReservedSeatsByScreeningId(s.getId());
+            int availableSeats  = s.getTotalSeats() - reservedSeats; // 실제 남은 좌석 수
+            System.out.println("번호: " + (i + 1));
+            System.out.println("시간: " + s.getStartTime() + " ~ " + s.getEndTime());
+            System.out.println("이용가능 좌석: " + availableSeats);
             System.out.println("-------------------------------");
         }
 
@@ -112,24 +127,24 @@ public class ReservationCommand implements Command {
         }
         Screening selectedScreening = screenings.get(screeningChoice - 1); // 인덱스로 선택
 
-
         // 5단계: 선택된 상영 정보 출력
         System.out.println("✅ 선택하신 영화:");
         System.out.println("영화제목: " + selectedScreening.getMovie().getTitle());
         System.out.println("영화관: " + selectedScreening.getTheater().getLocation());
         System.out.println("날짜: " + selectedScreening.getScreeningDate());
         System.out.println("시간: " + selectedScreening.getStartTime() + " ~ " + selectedScreening.getEndTime());
-//        System.out.println("이용가능좌석: " + selectedScreening.getAvailableSeats());
+        int reservedCount = reservationRepository.countReservedSeatsByScreeningId(selectedScreening.getId());
+        int totalSeats = selectedScreening.getTheater().getTotalSeat();
+        int availableSeats = totalSeats - reservedCount;
+        System.out.println("이용가능좌석: " + availableSeats);
         System.out.println("-------------------------------");
 
         System.out.print("인원: ");
         int peopleCount = scanner.nextInt();
         scanner.nextLine();
 
-        ReservationRepository reservationRepository = new ReservationRepository();
-        List<String> reservedSeats = reservationRepository.findReservedSeatsByScreeningId(selectedScreening.getId());
-
         // 좌석표 출력 함수
+        List<String> reservedSeats = reservationRepository.findReservedSeatsByScreeningId(selectedScreening.getId());
         printSeatMap(reservedSeats);
 
         List<SeatRequest> seatList = new ArrayList<>();
@@ -137,10 +152,20 @@ public class ReservationCommand implements Command {
             while (true) {
                 System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
                 String seatInput = scanner.nextLine().trim().toUpperCase();
+
+                // 1. 정규식 및 범위 체크
+                if (!seatInput.matches("^[A-J](10|[1-9])$")) {
+                    System.out.println("좌석 번호는 반드시 A1 ~ J10 사이여야 합니다. 다시 입력하세요.");
+                    continue;
+                }
+
+                // 2. 이미 예약된 좌석 체크
                 if (reservedSeats.contains(seatInput)) {
                     System.out.println("이미 예약된 좌석입니다. 다른 좌석을 선택하세요.");
                     continue;
                 }
+
+                // 4. 정상 입력: row/col 추출
                 char row = seatInput.charAt(0);
                 int col = Integer.parseInt(seatInput.substring(1));
                 seatList.add(new SeatRequest(row, col));
@@ -178,7 +203,6 @@ public class ReservationCommand implements Command {
                 System.out.println("-----------------------------------");
             }
         }
-
         return true;
     }
 
