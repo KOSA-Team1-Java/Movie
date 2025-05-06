@@ -1,7 +1,7 @@
 package command;
 
 import controller.MainController;
-import exception.ExceptionController;
+import exception.CustomException;
 import member.Member;
 import member.MemberService;
 
@@ -9,13 +9,11 @@ import java.util.Scanner;
 
 public class LoginCommand implements Command {
     private final MemberService memberService;
-    private final ExceptionController exceptionController;
     private final Scanner scanner;
     private Member member;
 
-    public LoginCommand(MemberService memberService, ExceptionController exceptionController, Scanner scanner) {
+    public LoginCommand(MemberService memberService, Scanner scanner) {
         this.memberService = memberService;
-        this.exceptionController = exceptionController;
         this.scanner = scanner;
     }
 
@@ -30,7 +28,7 @@ public class LoginCommand implements Command {
             context.setLoginMember(member);
             System.out.println(member.getName() + "님 로그인 되었습니다.");
         } catch (Exception e) {
-            exceptionController.loginError(e);
+            throw new CustomException("로그인 실패",e);
         }
     }
 

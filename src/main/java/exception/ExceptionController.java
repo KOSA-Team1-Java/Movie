@@ -1,23 +1,11 @@
 package exception;
 
 public class ExceptionController {
-    public void signUpError(Exception e) {
-        System.out.println("회원가입 오류 : " + e.getMessage());
-    }
-    
-    public void loginError(Exception e) {
-        System.out.println("로그인 오류 : " + e.getMessage());
-    }
-    
-    public void sqlError(Exception e) {
-        System.out.println("SQL 오류 : " + e.getMessage());
-    }
-    
-    public void reserveError(Exception e) {
-        System.out.println("예약 중 오류 : " + e.getMessage());
-    }
-    
-    public void paymentError(Exception e) {
-        System.out.println("결제 중 오류 : " + e.getMessage());
+    public void handle(Exception e) {
+        if (e instanceof CustomException) {
+            System.out.println("서비스 오류 : " + e.getMessage());
+        } else {
+            System.out.println("오류 : " + e.getMessage());
+        }
     }
 }

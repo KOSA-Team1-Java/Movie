@@ -1,6 +1,6 @@
 package pay;
 
-import exception.MovieException;
+import exception.CustomException;
 import member.Member;
 import member.MemberService;
 
@@ -19,7 +19,7 @@ public class PayService {
         System.out.println("🎟️ 총 결제 금액: " + totalPrice + "원");
 
         if (member.getCash() + member.getCredit() < totalPrice) {
-            throw new MovieException("❌ 예산이 부족하여 예매할 수 없습니다.");
+            throw new CustomException("❌ 예산이 부족하여 예매할 수 없습니다.");
         }
 
         System.out.println("결제 수단을 선택하세요 (1.현금 / 2.카드)");

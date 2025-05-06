@@ -14,13 +14,15 @@ import java.util.Scanner;
 public class MainController {
 
     private final Map<String, Command> commandMap = new HashMap<>();
+    private final ExceptionController exceptionController;
     private Member loginMember = null;
     public void setLoginMember(Member m) { loginMember = m; }
     public boolean isLoggedIn() { return loginMember != null; }
 
     public MainController(MemberService memberService, MovieService movieService, ReservationService reservationService, ExceptionController exceptionController, Scanner scanner) {
-        commandMap.put("/signup", new SignUpCommand(memberService, exceptionController, scanner));
-        commandMap.put("/login", new LoginCommand(memberService, exceptionController, scanner));
+        this.exceptionController = exceptionController;
+        commandMap.put("/signup", new SignUpCommand(memberService, scanner));
+        commandMap.put("/login", new LoginCommand(memberService, scanner));
         commandMap.put("/logout", new LogoutCommand());
         commandMap.put("/book", new BookCommand(memberService, movieService, reservationService, scanner));
         commandMap.put("/movie",new MoviesCommand(movieService, scanner));
@@ -46,6 +48,11 @@ public class MainController {
         if (cmd.requiresLogin() && isLoggedIn() && cmd instanceof RequiredMember) {
             ((RequiredMember) cmd).setMember(loginMember);
         }
-        cmd.execute(this); // 상태 변화는 각 command 내부에서 setLoginMember 등
+        //실행
+        try {
+            cmd.execute(this);
+        } catch (Exception e) {
+            exceptionController.handle(e);
+        }
     }
 }

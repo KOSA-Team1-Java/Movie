@@ -1,6 +1,6 @@
 package member;
 
-import exception.MovieException;
+import exception.DataAccessException;
 import util.PasswordHasher;
 
 import java.sql.*;
@@ -23,7 +23,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
             System.out.println("successfully signup");
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new DataAccessException(e);
         }
     }
 
@@ -44,7 +44,7 @@ public class MemberRepository {
                 return new Member(id, password, name, age, cash, credit);
             }
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new DataAccessException(e);
         }
         return null;
     }
@@ -58,7 +58,7 @@ public class MemberRepository {
             pstmt.setString(3, member.getLoginId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new DataAccessException(e);
         }
         return member;
     }

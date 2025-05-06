@@ -1,6 +1,6 @@
 package movie;
 
-import exception.ExceptionController;
+import exception.DataAccessException;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -11,8 +11,6 @@ import java.util.List;
 import static util.ConnectionConst.*;
 
 public class MovieRepository {
-
-    private final ExceptionController exceptionController = new ExceptionController();
 
     public List<String> getMovies() {
         String sql = "SELECT title FROM movie";
@@ -26,9 +24,8 @@ public class MovieRepository {
             }
             return movies;
         } catch (SQLException e) {
-            exceptionController.sqlError(e);
+            throw new DataAccessException("영화 목록 조회 실패", e);
         }
-        return null;
     }
 
     public Movie findByTitle(String name) {
@@ -49,7 +46,7 @@ public class MovieRepository {
                 }
             }
         } catch (SQLException e) {
-            exceptionController.sqlError(e);
+            throw new DataAccessException("영화 조회 실패", e);
         }
         return null;
     }
@@ -88,7 +85,7 @@ public class MovieRepository {
                 screenings.add(new Screening(screeningId, movie, theater, screeningDate, startTime, endTime));
             }
         } catch (SQLException e) {
-            exceptionController.sqlError(e);
+            throw new DataAccessException("상영 조회 실패", e);
         }
         return screenings;
     }
