@@ -25,6 +25,7 @@ public class MainController {
         commandMap.put("/book", new BookCommand(memberService, movieService, reservationService, scanner));
         commandMap.put("/movie",new MoviesCommand(movieService, scanner));
         commandMap.put("/checkReservation", new CheckReservationCommand());
+        commandMap.put("/cancel", new CancelCommand());
         commandMap.put("/command", new CommandListCommand());
     }
 
