@@ -5,16 +5,15 @@ import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
 import movie.MovieService;
-import reservation.ReservationRepository;
 import reservation.ReservationService;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class MainController {
 
-    private final Map<String, Command> commandMap = new HashMap<>();
+    private final Map<String, Command> commandMap = new LinkedHashMap<>();
     private final ExceptionController exceptionController;
     private Member loginMember = null;
     public void setLoginMember(Member m) { loginMember = m; }
@@ -25,13 +24,13 @@ public class MainController {
         commandMap.put("/signup", new SignUpCommand(memberService, scanner));
         commandMap.put("/login", new LoginCommand(memberService, scanner));
         commandMap.put("/logout", new LogoutCommand());
-        commandMap.put("/NameChange", new ChangeNameCommand(memberService));
-        commandMap.put("/PW", new ChangePasswordCommand(memberService));
+        commandMap.put("/changeName", new ChangeNameCommand(memberService, scanner));
+        commandMap.put("/changePW", new ChangePasswordCommand(memberService, scanner));
         commandMap.put("/book", new BookCommand(memberService, movieService, reservationService, scanner));
-        commandMap.put("/movie",new MoviesCommand(movieService, scanner));
-        commandMap.put("/checkReservation", new CheckReservationCommand());
+        commandMap.put("/checkReservation", new CheckReservationCommand(reservationService));
+        commandMap.put("/movieList",new MoviesCommand(movieService));
         commandMap.put("/cancel", new CancelCommand(memberService, movieService, reservationService, scanner));
-        commandMap.put("/command", new CommandListCommand());
+        commandMap.put("/command", new CommandListCommand(commandMap.keySet()));
     }
 
     public void call(String command) {

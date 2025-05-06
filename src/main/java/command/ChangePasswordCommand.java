@@ -8,16 +8,13 @@ import java.util.Scanner;
 
 public class ChangePasswordCommand implements Command, RequiredMember {
 
-    private Member member;
     private final MemberService memberService;
+    private Scanner scanner;
+    private Member member;
 
-    public ChangePasswordCommand(MemberService memberService) {
+    public ChangePasswordCommand(MemberService memberService, Scanner scanner) {
         this.memberService = memberService;
-    }
-
-    @Override
-    public void setMember(Member member) {
-        this.member = member;
+        this.scanner = scanner;
     }
 
     @Override
@@ -27,13 +24,17 @@ public class ChangePasswordCommand implements Command, RequiredMember {
             return;
         }
 
-        Scanner scanner = new Scanner(System.in);
         System.out.print("새 비밀번호를 입력하세요: ");
         String newPassword = scanner.nextLine();
 
         // 비밀번호 변경 처리
         member = memberService.updatePassword(member, newPassword); // DB 반영 및 객체 갱신
         System.out.println("비밀번호가 성공적으로 변경되었습니다.");
+    }
+
+    @Override
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     @Override

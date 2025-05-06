@@ -2,35 +2,21 @@ package command;
 
 import controller.MainController;
 import member.Member;
-import reservation.ReservationRepository;
+import reservation.ReservationService;
 
 import java.util.List;
 
 public class CheckReservationCommand implements Command, RequiredMember {
 
+    private final ReservationService reservationService;
     private Member member;
-    private final ReservationRepository reservationRepository;
 
-    // 생성자에서 ReservationRepository를 주입받도록 수정
-    public CheckReservationCommand(ReservationRepository reservationRepository) {
-        if (reservationRepository == null) {
-            throw new IllegalArgumentException("ReservationRepository cannot be null");
-        }
-        this.reservationRepository = reservationRepository;
-    }
-
-    @Override
-    public void setMember(Member member) {
-        this.member = member;
+    public CheckReservationCommand(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     @Override
     public void execute(MainController context) {
-        if (member == null) {
-            System.out.println("로그인 후 예약을 확인할 수 있습니다.");
-            return;
-        }
-
         // 로그인된 회원의 예약 정보를 조회
         List<String> reservations = reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
 
@@ -44,6 +30,11 @@ public class CheckReservationCommand implements Command, RequiredMember {
             }
             System.out.println("------------- 예매내역 조회 끝 -------------");
         }
+    }
+
+    @Override
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     @Override
