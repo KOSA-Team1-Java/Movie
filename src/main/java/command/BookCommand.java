@@ -11,6 +11,7 @@ import movie.SeatRequest;
 import pay.PayService;
 import reservation.ReservationService;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +78,30 @@ public class BookCommand implements Command, RequiredMember {
             return;
         }
         String selectedLocation = locations.get(locationChoice - 1);
+
+        // 날짜 선택
+        System.out.println("예매 가능한 날짜를 선택하세요: ");
+        List<LocalDate> availableDates = screenings.stream()
+                .map(Screening::getScreeningDate)
+                .distinct()
+                .sorted()  // 날짜 순으로 정렬
+                .toList();
+
+        for (int i = 0; i < availableDates.size(); i++) {
+            System.out.println((i + 1) + ". " + availableDates.get(i));
+        }
+
+        System.out.print("날짜 번호 입력: ");
+        int dateChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (dateChoice < 1 || dateChoice > availableDates.size()) {
+            System.out.println("올바른 날짜 번호가 아닙니다.");
+            return;
+        }
+
+        LocalDate selectedDate = availableDates.get(dateChoice - 1);
+        System.out.println("선택한 날짜: " + selectedDate);
 
         // 3단계: 선택한 장소에 따른 상영 시간대 출력
         List<Screening> filterByLocationScreening = screenings.stream()
@@ -150,7 +175,7 @@ public class BookCommand implements Command, RequiredMember {
 
          //결제
         PayService payService = new PayService();
-        int totalPrice = 0;
+        int totalPrice = selectedMovie.getPrice() * seatList.size();
         payService.pay(member, totalPrice, scanner);
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");

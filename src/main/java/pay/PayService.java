@@ -15,7 +15,8 @@ public class PayService {
             throw new MovieException("❌ 예산이 부족하여 예매할 수 없습니다.");
         }
 
-        System.out.println("결제 수단을 선택하세요 (1.현금 / 2.카드");
+        System.out.println("결제 수단을 선택하세요 (1.현금 / 2.카드)");
+        System.out.println("입력 : ");
         int payMethod = scanner.nextInt();
         scanner.nextLine();
 
