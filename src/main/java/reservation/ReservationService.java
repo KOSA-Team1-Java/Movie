@@ -13,7 +13,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Scanner;
 
 import static util.ConnectionConst.*;
 
@@ -23,7 +22,6 @@ public class ReservationService {
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
     }
-
     public void save(Member member, Screening screening, List<SeatRequest> seatList) {
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             conn.setAutoCommit(false); // 트랜잭션 시작

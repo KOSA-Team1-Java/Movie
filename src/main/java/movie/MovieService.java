@@ -1,10 +1,11 @@
 package movie;
 
+import reservation.ReservationRepository;
+
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.stream.Collectors;
-import reservation.ReservationRepository;
 
 public class MovieService {
 
