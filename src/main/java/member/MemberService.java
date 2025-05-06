@@ -3,6 +3,7 @@ package member;
 import exception.MovieException;
 import pay.Pay;
 import util.PasswordHasher;
+import java.util.Scanner;
 
 public class MemberService {
 
@@ -32,6 +33,19 @@ public class MemberService {
     public void updateBudget(Member member) {
         memberRepository.updateBudget(member);
     }
+
+    public Member updateName(Member member, String newName) {
+        return memberRepository.updateName(member, newName);
+    }
+
+    public Member updatePassword(Member member, String newPassword) {
+        return memberRepository.updatePassword(member, newPassword);
+    }
+
+
+
+
+
 
     public void processPayment(Member member, Pay payMethod, int amount) {
 

@@ -68,4 +68,11 @@ public class Member {
     public void setCash(int cash) {
         this.cash = cash;
     }
+
+    public void setName(String newName) {
+
+    }
+
+    public void setPassword(String hashedPassword) {
+    }
 }
