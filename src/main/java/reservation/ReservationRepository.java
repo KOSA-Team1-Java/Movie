@@ -1,8 +1,10 @@
 package reservation;
 
+import movie.Screening;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Date;
+import java.util.*;
 
 import static util.ConnectionConst.*;
 
@@ -25,6 +27,7 @@ public class ReservationRepository {
         }
         return -1;
     }
+
 
     // 예산 업데이트
     public void updateBudget(Connection conn, String loginId, int newBudget) throws SQLException {
@@ -54,17 +57,16 @@ public class ReservationRepository {
 
     public List<String> findReservedSeatsByScreeningId(int screeningId) {
         List<String> reservedSeats = new ArrayList<>();
-        String sql = "SELECT rs.seat_row, rs.seat_col " +
-                "FROM reservation r " +
-                "JOIN reservationseat rs ON r.id = rs.reservation_id " +
-                "WHERE r.screening_id = ?";
+        String sql = "SELECT seat_row, seat_col FROM reservationseat WHERE reservation_id IN " +
+                "(SELECT id FROM reservation WHERE screening_id = ?)";
+
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, screeningId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    String seatCode = rs.getString("seat_row") + rs.getInt("seat_col");
-                    reservedSeats.add(seatCode);
+                    String seat = rs.getString("seat_row") + rs.getInt("seat_col");
+                    reservedSeats.add(seat);
                 }
             }
         } catch (SQLException e) {
@@ -73,31 +75,9 @@ public class ReservationRepository {
         return reservedSeats;
     }
 
-
-    public List<Integer> findReservationIdsByMemberLoginId(String loginId) {
-        List<Integer> reservationIds = new ArrayList<>();
-        String sql = "SELECT id FROM reservation WHERE member_loginId = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, loginId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    reservationIds.add(rs.getInt("id"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return reservationIds;
-    }
-
-
-
-
     public int countReservedSeatsByScreeningId(int screeningId) {
-        String sql = "SELECT COUNT(*) FROM reservation r " +
-                "JOIN reservationseat rs ON r.id = rs.reservation_id " +
-                "WHERE r.screening_id = ?";
+        String sql = "SELECT COUNT(*) FROM reservationseat WHERE reservation_id IN " +
+                "(SELECT id FROM reservation WHERE screening_id = ?)";
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, screeningId);
@@ -112,25 +92,78 @@ public class ReservationRepository {
         return 0;
     }
 
-    public void deleteReservationSeatsByReservationId(int reservationId) {
-        String sql = "DELETE FROM reservationseat WHERE reservation_id = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, reservationId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void deleteReservationById(int reservationId) {
-        String sql = "DELETE FROM reservation WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, reservationId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // 회원 로그인 ID로 예약 내역을 조회하는 메서드
+    public List<String> findReservationsByMemberLoginId(String loginId) {
+        Map<Integer, ReservationInfo> reservationMap = new LinkedHashMap<>();
+        String sql = "SELECT r.id, mv.title, r.screening_id, s.screeningdate, s.starttime, s.endtime, th.location, " +
+                "rs.seat_row, rs.seat_col " +
+                "FROM reservation r " +
+                "JOIN screening s ON r.screening_id = s.id " +
+                "JOIN movie mv ON s.movie_id = mv.id " +
+                "JOIN theater th ON s.theater_id = th.id " +
+                "WHERE r.member_loginId = ?";
+
+            pstmt.setString(1, loginId);
+                while (rs.next()) {
+                    int reservationId = rs.getInt("id");
+                    String title = rs.getString("title");
+                    int screeningId = rs.getInt("screening_id");
+
+                    // 날짜 및 시간 컬럼을 적절히 가져오기
+                    java.sql.Date screeningDate = rs.getDate("screeningdate"); // 날짜
+                    java.sql.Time startTime = rs.getTime("starttime"); // 시작 시간
+                    java.sql.Time endTime = rs.getTime("endtime"); // 종료 시간
+                    String location = rs.getString("location");  // 영화관 위치 (이제 location으로 사용)
+
+                    String seat = rs.getString("seat_row") + rs.getInt("seat_col");
+
+                    // 예약 ID로 정보 집합을 묶어 저장
+                    reservationMap
+                            .computeIfAbsent(reservationId, id -> new ReservationInfo(id, title, screeningId, screeningDate, startTime, endTime, location))
+                            .addSeat(seat);
+
+        List<String> formattedReservations = new ArrayList<>();
+        for (ReservationInfo info : reservationMap.values()) {
+            formattedReservations.add(info.format());
+        }
+        return formattedReservations;
+
+    private static class ReservationInfo {
+        int reservationId;
+        String movieTitle;
+        int screeningId;
+        java.sql.Date screeningDate;
+        java.sql.Time startTime;
+        java.sql.Time endTime;
+        String location;  // 영화관 위치
+        List<String> seats = new ArrayList<>();
+
+        public ReservationInfo(int reservationId, String movieTitle, int screeningId, java.sql.Date screeningDate,
+                               java.sql.Time startTime, java.sql.Time endTime, String location) {
+            this.reservationId = reservationId;
+            this.movieTitle = movieTitle;
+            this.screeningId = screeningId;
+            this.screeningDate = screeningDate;
+            this.startTime = startTime;
+            this.endTime = endTime;
+            this.location = location;
+        }
+
+        public void addSeat(String seat) {
+            seats.add(seat);
+        }
+
+        public String format() {
+            // 날짜와 시간을 원하는 형식으로 변환
+            String formattedDate = String.format("%1$tY.%1$tm.%1$td (%1$tA)", screeningDate);
+            String formattedStartTime = String.format("%1$tH:%1$tM", startTime);
+            String formattedEndTime = String.format("%1$tH:%1$tM", endTime);
+            String formattedSeats = String.join(", ", seats);
+            String totalPeople = String.format("%d명", seats.size());
+
+            return String.format("%s\n%s %s ~ %s\n%s / %s\n좌석: %s",
+                    movieTitle, formattedDate, formattedStartTime, formattedEndTime, location, totalPeople, formattedSeats);
         }
     }
 }

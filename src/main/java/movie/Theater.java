@@ -13,4 +13,11 @@ public class Theater {
         this.location = location;
         this.totalSeat = totalSeat;
     }
+
+    public void setId(int id) { this.id = id; }
+
+    public void setLocation(String location) { this.location = location; }
+
+    public void setName(String name) {
+    }
 }

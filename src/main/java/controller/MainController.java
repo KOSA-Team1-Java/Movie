@@ -5,6 +5,7 @@ import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
 import movie.MovieService;
+import reservation.ReservationRepository;
 import reservation.ReservationService;
 
 import java.util.HashMap;
@@ -18,7 +19,8 @@ public class MainController {
     public void setLoginMember(Member m) { loginMember = m; }
     public boolean isLoggedIn() { return loginMember != null; }
 
-    public MainController(MemberService memberService, MovieService movieService, ReservationService reservationService, ExceptionController exceptionController, Scanner scanner) {
+    public MainController(MemberService memberService, MovieService movieService, ReservationService reservationService,
+                          ExceptionController exceptionController, Scanner scanner, ReservationRepository reservationRepository) {
         commandMap.put("/signup", new SignUpCommand(memberService, exceptionController, scanner));
         commandMap.put("/login", new LoginCommand(memberService, exceptionController, scanner));
         commandMap.put("/logout", new LogoutCommand());

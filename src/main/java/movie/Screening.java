@@ -3,6 +3,8 @@ package movie;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -26,5 +28,24 @@ public class Screening {
     }
     public int getTotalSeats() {
         return theater.getTotalSeat();
+    }
+
+    public void setId(int screeningId) {
+    }
+
+    public void setMovie(Movie movie) {
+    }
+
+    public void setScreeningDate(Date screeningDate) {
+    }
+
+    public void setTheater(Theater theater) {
+    }
+
+    public void setStartTime(Time startTime) {
+    }
+
+    public void setEndTime(Time endTime) {
+
     }
 }

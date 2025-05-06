@@ -2,10 +2,17 @@ package pay;
 
 import exception.MovieException;
 import member.Member;
+import member.MemberService;
 
 import java.util.Scanner;
 
 public class PayService {
+
+    private MemberService memberService;
+
+    public PayService(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     public void pay(Member member, int totalPrice, Scanner scanner) {
         System.out.println("💳 현재 잔액: 현금 " + member.getCash() + "원, 카드 " + member.getCredit() +"원");
@@ -16,40 +23,41 @@ public class PayService {
         }
 
         System.out.println("결제 수단을 선택하세요 (1.현금 / 2.카드)");
-        System.out.println("입력 : ");
+        System.out.print("입력 : ");
         int payMethod = scanner.nextInt();
         scanner.nextLine();
 
         if (payMethod == 1) {
-            CashPay cashPay;
+            Pay cashPay;
             if (member.getCash() < totalPrice) {
                 int cashAmount = member.getCash();
                 int creditAmount = totalPrice - cashAmount;
                 cashPay = new CashPay(member, cashAmount);
-                CreditPay creditPay = new CreditPay(member, creditAmount);
-                int cashBalance = cashPay.pay();
-                int creditBalance = creditPay.pay();
+                Pay creditPay = new CreditPay(member, creditAmount);
+                cashPay.pay();
+                creditPay.pay();
             } else {
                 cashPay = new CashPay(member, totalPrice);
-                int cashBalance = cashPay.pay();
-                int creditBalance = member.getCredit();
+                cashPay.pay();
             }
         }
         else if (payMethod == 2) {
-            CreditPay creditPay;
+            Pay creditPay;
             if (member.getCredit() < totalPrice) {
                 int creditAmount = member.getCredit();
                 int cashAmount = totalPrice - creditAmount;
                 creditPay = new CreditPay(member, creditAmount);
-                CashPay cashPay = new CashPay(member, cashAmount);
-                int creditBalance = creditPay.pay();
-                int cashBalance = cashPay.pay();
+                Pay cashPay = new CashPay(member, cashAmount);
+                creditPay.pay();
+                cashPay.pay();
             } else {
                 creditPay = new CreditPay(member, totalPrice);
-                int creditBalance = creditPay.pay();
-                int cashBalance = member.getCash();
+                creditPay.pay();
             }
         }
+
+        memberService.updateBudget(member);
+
         System.out.println("✅ 결제 완료!");
         System.out.println("💳 남은 예산 : 현금 " + member.getCash() + "원, 카드 " + member.getCredit() +"원");
     }

@@ -13,12 +13,8 @@ public class CreditPay implements Pay {
     }
 
     @Override
-    public int pay() {
-        if (member.getCredit() >= amount) {
-            member.decreaseCredit(amount);
-            System.out.println("💳 카드 결제가 완료되었습니다.");
-            return member.getCredit();
-        }
-        return 0;
+    public void pay() {
+        member.decreaseCredit(amount);
+        System.out.println("💳 카드 결제가 완료되었습니다.");
     }
 }
