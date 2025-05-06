@@ -31,4 +31,13 @@ public class MemberService {
     public void updateBudget(Member member) {
         memberRepository.updateBudget(member);
     }
+
+    public Member updateName(Member member, String newName) {
+        return memberRepository.updateName(member, newName);
+    }
+
+    public Member updatePassword(Member member, String newPassword) {
+        return memberRepository.updatePassword(member, newPassword);
+    }
+
 }

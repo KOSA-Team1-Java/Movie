@@ -10,6 +10,8 @@ public class CommandListCommand implements Command {
         System.out.println("/signup - 회원가입");
         System.out.println("/login - 로그인");
         System.out.println("/logout - 로그아웃");
+        System.out.println("/NameChange - 이름 변경");
+        System.out.println("/PW - 비밀번호 변경");
         System.out.println("/book - 영화 예매");
         System.out.println("/checkReservation - 예매 내역 확인");
         System.out.println("/movie - 영화 목록");

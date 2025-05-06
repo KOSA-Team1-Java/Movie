@@ -17,10 +17,19 @@ public class Movie {
     }
 
     public void setPrice(int price) {
-        this.price = price;
+
     }
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public void setId(int id) { this.id = id; }
+
+    public void setTitle(String title) { this.title = title; }
+
+    public void setDirector(String director) {}
+
+    public void setGenre(String genre) {
     }
 }

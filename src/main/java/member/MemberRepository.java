@@ -62,4 +62,43 @@ public class MemberRepository {
         }
         return member;
     }
+
+    public Member updateName(Member member, String newName) {
+        String sql = "UPDATE member SET name = ? WHERE loginid = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, newName);
+            pstmt.setString(2, member.getLoginId());
+            pstmt.executeUpdate();
+
+            return member; // 변경된 객체를 반환
+        } catch (SQLException e) {
+            throw new MovieException(e);
+        }
+    }
+
+    public Member updatePassword(Member member, String newPassword) {
+        String sql = "UPDATE member SET password = ? WHERE loginid = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // 새로운 비밀번호 해시화
+            String hashedPassword = PasswordHasher.hash(newPassword);
+            pstmt.setString(1, hashedPassword);
+            pstmt.setString(2, member.getLoginId());
+
+            pstmt.executeUpdate();
+
+            // 비밀번호 변경 후 객체의 비밀번호 갱신
+            member.setPassword(hashedPassword); // 객체 내 비밀번호를 갱신
+            return member;
+        } catch (SQLException e) {
+            throw new MovieException(e);
+        }
+    }
+
+
+
+
 }

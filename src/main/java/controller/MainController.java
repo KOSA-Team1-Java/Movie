@@ -5,6 +5,7 @@ import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
 import movie.MovieService;
+import reservation.ReservationRepository;
 import reservation.ReservationService;
 
 import java.util.HashMap;
@@ -24,9 +25,11 @@ public class MainController {
         commandMap.put("/signup", new SignUpCommand(memberService, scanner));
         commandMap.put("/login", new LoginCommand(memberService, scanner));
         commandMap.put("/logout", new LogoutCommand());
+        commandMap.put("/NameChange", new ChangeNameCommand(memberService));
+        commandMap.put("/PW", new ChangePasswordCommand(memberService));
         commandMap.put("/book", new BookCommand(memberService, movieService, reservationService, scanner));
-        commandMap.put("/movie",new MoviesCommand(movieService, scanner));
-        commandMap.put("/checkReservation", new CheckReservationCommand());
+        commandMap.put("/movie", new MoviesCommand(movieService, scanner));
+        commandMap.put("/checkReservation", new CheckReservationCommand(reservationRepository));
         commandMap.put("/command", new CommandListCommand());
     }
 
