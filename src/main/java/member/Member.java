@@ -12,16 +12,18 @@ public class Member {
     private String password;
     private String name;
     private int age;
+    private String email;
     private int cash; // 현금 예산 100,000원
     private int credit; // 카드 예산 100,000원
 
     private List<Integer> paymentHistory = new ArrayList<>();
 
-    public Member(String loginId, String password, String name, int age) {
+    public Member(String loginId, String password, String name, int age, String email) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
         this.age = age;
+        this.email = email;
         this.cash = 100000;
         this.credit = 100000;
     }

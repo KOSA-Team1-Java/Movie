@@ -30,8 +30,8 @@ public class MovieService {
     }
 
     // 1-1 단계
-    public Movie getMovieByTitle(String name) {
-        return movieRepository.findByTitle(name);
+    public Movie getMovieById(int movieId) {
+        return movieRepository.findById(movieId);
     }
 
     public List<Screening> getScreenings(int movieId) {

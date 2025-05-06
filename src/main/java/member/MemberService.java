@@ -12,8 +12,8 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public void signUp(String id, String password, String name, int age)  throws MovieException {
-        Member member = new Member(id, password, name, age);
+    public void signUp(String id, String password, String name, int age, String email)  throws MovieException {
+        Member member = new Member(id, password, name, age, email);
         memberRepository.save(member);
     }
 

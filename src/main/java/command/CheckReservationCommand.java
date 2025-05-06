@@ -14,6 +14,7 @@ public class CheckReservationCommand implements Command, RequiredMember {
 
     @Override
     public void execute(MainController context) {
+
     }
 
     @Override

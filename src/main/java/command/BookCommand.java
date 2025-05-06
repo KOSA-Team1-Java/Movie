@@ -42,18 +42,25 @@ public class BookCommand implements Command, RequiredMember {
     public void execute(MainController context) throws MovieException {
         // 1단계: 영화 목록 출력
         System.out.println("상영 중인 영화");
-        movieService.showMovie();
-        System.out.print("예매할 영화 제목 : ");
-        String title = scanner.nextLine(); // 영화 번호 입력
+        movieService.showMovie(); // 영화 목록 출력 (영화 ID 포함)
 
-        // 1-1 단계: 영화 정보(객체) 가져오기
-        Movie selectedMovie = movieService.getMovieByTitle(title);
-        if (selectedMovie == null) {
-            System.out.println("올바른 영화 제목이 아닙니다.");
-            return;
+        Movie selectedMovie = null;
+        while (selectedMovie == null) {
+            try {
+                System.out.print("예매할 영화 번호 : ");
+                int movieId = Integer.parseInt(scanner.nextLine());
+
+                // 영화 정보(객체) 가져오기
+                selectedMovie = movieService.getMovieById(movieId); // movie_id로 조회
+                if (selectedMovie == null) {
+                    System.out.println("❌ 해당 번호의 영화가 존재하지 않습니다. 다시 입력해주세요.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("❌ 숫자로 입력해주세요.");
+            }
         }
 
-        // 1.2 나이 제한 체크!
+// 1.2 나이 제한 체크!
         if (member.getAge() < selectedMovie.getAge()) {
             System.out.println("❌ 청소년 관람불가 영화입니다. 예매하실 수 없습니다.");
             return;

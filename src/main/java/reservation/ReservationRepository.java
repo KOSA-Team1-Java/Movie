@@ -1,9 +1,5 @@
 package reservation;
 
-import member.Member;
-import movie.Screening;
-import movie.SeatRequest;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +8,7 @@ import static util.ConnectionConst.*;
 
 public class ReservationRepository {
 
-    // 예매(Reservation) insert. 생성된 ID   반환
+    // 예매(Reservation) insert. 생성된 ID 반환
     public int insertReservation(Connection conn, String memberLoginId, int screeningId) throws SQLException {
         String sql = "INSERT INTO reservation (member_loginId, screening_id) VALUES (?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -94,21 +90,21 @@ public class ReservationRepository {
         }
         return 0;
     }
-    
-    //예매 삭제
-    public void deleteReservationWithSeats(Connection conn, int reservationId) throws SQLException {
-        // reservation_seat 먼저 삭제
-        String deleteSeats = "DELETE FROM reservationseat WHERE reservation_id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(deleteSeats)) {
-            pstmt.setInt(1, reservationId);
-            pstmt.executeUpdate();
+    // 예매 취소 시 좌석 정보 삭제
+    public void deleteSeatsByReservationId(Connection conn, int reservationId) throws SQLException {
+        String query = "DELETE FROM reservation_seat WHERE reservation_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, reservationId);
+            stmt.executeUpdate();
         }
+    }
 
-        // reservation 삭제
-        String deleteReservation = "DELETE FROM reservation WHERE id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(deleteReservation)) {
-            pstmt.setInt(1, reservationId);
-            pstmt.executeUpdate();
+    // 예매 취소 시 예매 정보 삭제
+    public void deleteReservationById(Connection conn, int reservationId) throws SQLException {
+        String query = "DELETE FROM reservation WHERE reservation_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, reservationId);
+            stmt.executeUpdate();
         }
     }
 
