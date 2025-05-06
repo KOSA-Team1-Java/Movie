@@ -24,7 +24,4 @@ public class Screening {
         this.startTime = startTime;
         this.endTime = endTime;
     }
-    public int getTotalSeats() {
-        return theater.getTotalSeat();
-    }
 }

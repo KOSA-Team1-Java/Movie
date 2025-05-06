@@ -1,7 +1,6 @@
 package member;
 
 import exception.MovieException;
-import pay.Pay;
 import util.PasswordHasher;
 
 public class MemberService {
@@ -31,11 +30,5 @@ public class MemberService {
 
     public void updateBudget(Member member) {
         memberRepository.updateBudget(member);
-    }
-
-    public void processPayment(Member member, Pay payMethod, int amount) {
-
-
-        member.addPaymentHistory(amount); // 회원 결제 내역 저장
     }
 }

@@ -35,11 +35,6 @@ public class Member {
         this.credit = credit;
     }
 
-    // 결제 이력 추가
-    public void addPaymentHistory(int amount) {
-        this.paymentHistory.add(amount);
-    }
-
     public void decreaseCash(int amount) {
         if (amount <= 0) {
             System.out.println("❌ 차감할 금액은 0보다 커야 합니다.");
@@ -62,10 +57,5 @@ public class Member {
             return;
         }
         this.credit -= amount;
-    }
-
-    // 예산 업데이트 메서드 (DB 업데이트용)
-    public void setCash(int cash) {
-        this.cash = cash;
     }
 }

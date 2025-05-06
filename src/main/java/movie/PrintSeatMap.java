@@ -29,7 +29,4 @@ public class PrintSeatMap {
             System.out.println();
         }
     }
-
-
-
 }
