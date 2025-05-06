@@ -144,7 +144,7 @@ public class BookCommand implements Command, RequiredMember {
         int peopleCount = scanner.nextInt();
         scanner.nextLine();
 
-//        //좌석표 출력
+        //좌석표 출력
         int availableSeats = movieService.getAvailableSeatsByScreening(selectedScreening);
         System.out.println("이용가능좌석: " + availableSeats);
         movieService.printSeatMap(selectedScreening.getId());
@@ -177,6 +177,9 @@ public class BookCommand implements Command, RequiredMember {
         PayService payService = new PayService();
         int totalPrice = selectedMovie.getPrice() * seatList.size();
         payService.pay(member, totalPrice, scanner);
+
+        //예매정보 db저장
+        reservationService.save(member, selectedScreening, seatList);
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
         String viewChoice = scanner.nextLine();

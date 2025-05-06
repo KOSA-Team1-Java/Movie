@@ -55,10 +55,6 @@ public class MovieService {
     }
 
 
-
-
-
-
     // 2단계 : 영화 ID로 지역 목록 반환
     public List<String> getLocationsByMovieId(int movieId) {
         List<Screening> screenings = movieRepository.getScreenings(movieId);

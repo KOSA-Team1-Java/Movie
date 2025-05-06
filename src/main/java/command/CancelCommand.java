@@ -15,12 +15,11 @@ public class CancelCommand implements Command, RequiredMember{
     private final Scanner scanner;
     private Member member;
 
-    public CancelCommand(MemberService memberService, MovieService movieService, ReservationService reservationService, Scanner scanner, Member member) {
+    public CancelCommand(MemberService memberService, MovieService movieService, ReservationService reservationService, Scanner scanner) {
         this.memberService = memberService;
         this.movieService = movieService;
         this.reservationService = reservationService;
         this.scanner = scanner;
-        this.member = member;
     }
 
     @Override
