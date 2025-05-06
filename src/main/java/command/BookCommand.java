@@ -6,10 +6,12 @@ import member.MemberService;
 import movie.Movie;
 import movie.MovieService;
 import movie.Screening;
+import movie.SeatRequest;
 import pay.PayService;
 import reservation.ReservationService;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -118,45 +120,34 @@ public class BookCommand implements Command, RequiredMember {
         int peopleCount = scanner.nextInt();
         scanner.nextLine();
 
-        //좌석표 출력
+//        //좌석표 출력
+        int availableSeats = movieService.getAvailableSeatsByScreening(selectedScreening);
+        System.out.println("이용가능좌석: " + availableSeats);
+        movieService.printSeatMap(selectedScreening.getId());
 
-//        int reservedCount = reservationRepository.countReservedSeatsByScreeningId(selectedScreening.getId());
-//        int totalSeats = selectedScreening.getTheater().getTotalSeat();
-//        int availableSeats = totalSeats - reservedCount;
-//        System.out.println("이용가능좌석: " + availableSeats);
-//        // 좌석표 출력 함수
-//        List<String> reservedSeats = reservationRepository.findReservedSeatsByScreeningId(selectedScreening.getId());
-//        printSeatMap(reservedSeats);
+        List<String> reservedSeats = movieService.getReservedSeatsByScreeningId(selectedScreening.getId());
 
-        //좌석 선택
-
-//        List<SeatRequest> seatList = new ArrayList<>();
-//        for (int i = 0; i < peopleCount; i++) {
-//            while (true) {
-//                System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
-//                String seatInput = scanner.nextLine().trim().toUpperCase();
-//
-//                // 1. 정규식 및 범위 체크
-//                if (!seatInput.matches("^[A-J](10|[1-9])$")) {
-//                    System.out.println("좌석 번호는 반드시 A1 ~ J10 사이여야 합니다. 다시 입력하세요.");
-//                    continue;
-//                }
-//
-//                // 2. 이미 예약된 좌석 체크
-//                if (reservedSeats.contains(seatInput)) {
-//                    System.out.println("이미 예약된 좌석입니다. 다른 좌석을 선택하세요.");
-//                    continue;
-//                }
-//
-//                // 4. 정상 입력: row/col 추출
-//                char row = seatInput.charAt(0);
-//                int col = Integer.parseInt(seatInput.substring(1));
-//                seatList.add(new SeatRequest(row, col));
-//                reservedSeats.add(seatInput); // 지금 선택한 것도 예약 예정으로 추가(중복입력 방지)
-//                break;
-//            }
-//        }
-//
+        // 좌석 선택
+        List<SeatRequest> seatList = new ArrayList<>();
+        for (int i = 0; i < peopleCount; i++) {
+            while (true) {
+                System.out.print("예약할 좌석 번호를 입력하세요 (예: A1): ");
+                String seatInput = scanner.nextLine().trim().toUpperCase();
+                if (!seatInput.matches("^[A-J](10|[1-9])$")) {
+                    System.out.println("좌석 번호는 A1 ~ J10 사이여야 합니다. 다시 입력하세요.");
+                    continue;
+                }
+                if (reservedSeats.contains(seatInput)) {
+                    System.out.println("이미 예약된 좌석입니다. 다른 좌석을 선택하세요.");
+                    continue;
+                }
+                char row = seatInput.charAt(0);
+                int col = Integer.parseInt(seatInput.substring(1));
+                seatList.add(new SeatRequest(row, col));
+                reservedSeats.add(seatInput);
+                break;
+            }
+        }
 
          //결제
         payService.pay(member, selectedMovie, seatList);
@@ -186,10 +177,10 @@ public class BookCommand implements Command, RequiredMember {
             System.out.println("-----------------------------------");
         }
         }
-    }
-
     @Override
     public boolean requiresLogin() {
         return true;
     }
+
 }
+

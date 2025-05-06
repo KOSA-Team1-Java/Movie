@@ -20,8 +20,8 @@ public class Main {
         MemberRepository memberRepository = new MemberRepository();
         MemberService memberService = new MemberService(memberRepository);
         MovieRepository movieRepository = new MovieRepository();
-        MovieService movieService = new MovieService(movieRepository);
         ReservationRepository reservationRepository = new ReservationRepository();
+        MovieService movieService = new MovieService(movieRepository,reservationRepository);
         ReservationService reservationService = new ReservationService(reservationRepository);
         ExceptionController exceptionController = new ExceptionController();
         MainController mainController = new MainController(memberService, movieService, reservationService, exceptionController, scanner);
