@@ -30,7 +30,7 @@ public class MemberService {
     }
 
     public void updateBudget(Member member) {
-//        memberRepository.updateBudget(member);
+        memberRepository.updateBudget(member);
     }
 
     public void processPayment(Member member, Pay payMethod, int amount) {

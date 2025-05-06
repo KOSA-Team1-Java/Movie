@@ -13,12 +13,8 @@ public class CashPay implements Pay {
     }
 
     @Override
-    public int pay() {
-        if (member.getCash() >= amount) {
-            member.decreaseCash(amount);
-            System.out.println("💵 현금 결제가 완료되었습니다.");
-            return member.getCash();
-        }
-        return 0;
+    public void pay() {
+        member.decreaseCash(amount);
+        System.out.println("💵 현금 결제가 완료되었습니다.");
     }
 }

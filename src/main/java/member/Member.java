@@ -12,8 +12,8 @@ public class Member {
     private String password;
     private String name;
     private int age;
-    private int cash = 100000; // 현금 예산 100,000원
-    private int credit = 100000; // 카드 예산 100,000원
+    private int cash; // 현금 예산 100,000원
+    private int credit; // 카드 예산 100,000원
 
     private List<Integer> paymentHistory = new ArrayList<>();
 
@@ -22,6 +22,17 @@ public class Member {
         this.password = password;
         this.name = name;
         this.age = age;
+        this.cash = 100000;
+        this.credit = 100000;
+    }
+
+    public Member(String loginId, String password, String name, int age, int cash, int credit) {
+        this.loginId = loginId;
+        this.password = password;
+        this.name = name;
+        this.age = age;
+        this.cash = cash;
+        this.credit = credit;
     }
 
     // 결제 이력 추가

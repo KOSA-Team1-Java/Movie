@@ -173,8 +173,8 @@ public class BookCommand implements Command, RequiredMember {
             }
         }
 
-         //결제
-        PayService payService = new PayService();
+        //결제
+        PayService payService = new PayService(memberService);
         int totalPrice = selectedMovie.getPrice() * seatList.size();
         payService.pay(member, totalPrice, scanner);
 
