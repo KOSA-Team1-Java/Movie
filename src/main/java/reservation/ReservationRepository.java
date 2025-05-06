@@ -73,6 +73,27 @@ public class ReservationRepository {
         return reservedSeats;
     }
 
+
+    public List<Integer> findReservationIdsByMemberLoginId(String loginId) {
+        List<Integer> reservationIds = new ArrayList<>();
+        String sql = "SELECT id FROM reservation WHERE member_loginId = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, loginId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    reservationIds.add(rs.getInt("id"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservationIds;
+    }
+
+
+
+
     public int countReservedSeatsByScreeningId(int screeningId) {
         String sql = "SELECT COUNT(*) FROM reservation r " +
                 "JOIN reservationseat rs ON r.id = rs.reservation_id " +
@@ -91,4 +112,25 @@ public class ReservationRepository {
         return 0;
     }
 
+    public void deleteReservationSeatsByReservationId(int reservationId) {
+        String sql = "DELETE FROM reservationseat WHERE reservation_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, reservationId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteReservationById(int reservationId) {
+        String sql = "DELETE FROM reservation WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, reservationId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
