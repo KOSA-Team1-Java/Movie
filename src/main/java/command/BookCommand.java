@@ -1,6 +1,7 @@
 package command;
 
 import controller.MainController;
+import exception.MovieException;
 import member.Member;
 import member.MemberService;
 import movie.Movie;
@@ -19,15 +20,13 @@ public class BookCommand implements Command, RequiredMember {
     private final MemberService memberService;
     private final MovieService movieService;
     private final ReservationService reservationService;
-    private final PayService payService;
     private final Scanner scanner;
     private Member member;
 
-    public BookCommand(MemberService memberService, MovieService movieService, ReservationService reservationService, PayService payService, Scanner scanner) {
+    public BookCommand(MemberService memberService, MovieService movieService, ReservationService reservationService, Scanner scanner) {
         this.memberService = memberService;
         this.movieService = movieService;
         this.reservationService = reservationService;
-        this.payService = payService;
         this.scanner = scanner;
     }
 
@@ -37,7 +36,7 @@ public class BookCommand implements Command, RequiredMember {
     }
 
     @Override
-    public void execute(MainController context) {
+    public void execute(MainController context) throws MovieException {
         // 1단계: 영화 목록 출력
         System.out.println("상영 중인 영화");
         movieService.showMovie();
@@ -159,8 +158,9 @@ public class BookCommand implements Command, RequiredMember {
 //
 
          //결제
-        payService.pay(member, selectedMovie, seatList);
-        boolean success = reservationService.bookMovie(member, selectedScreening.getMovie(), selectedScreening.getId(), seatList);
+        PayService payService = new PayService();
+        int totalPrice = 0;
+        payService.pay(member, totalPrice, scanner);
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
         String viewChoice = scanner.nextLine();
@@ -186,8 +186,6 @@ public class BookCommand implements Command, RequiredMember {
             System.out.println("-----------------------------------");
         }
         }
-    }
-
     @Override
     public boolean requiresLogin() {
         return true;
