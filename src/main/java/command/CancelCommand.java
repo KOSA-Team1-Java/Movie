@@ -4,20 +4,11 @@ import controller.MainController;
 import member.Member;
 import member.MemberService;
 import movie.MovieService;
-import movie.Screening;
-import reservation.Reservation;
 import reservation.ReservationDto;
 import reservation.ReservationService;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static util.ConnectionConst.*;
 
 public class CancelCommand implements Command, RequiredMember{
     private final MemberService memberService;
@@ -35,15 +26,18 @@ public class CancelCommand implements Command, RequiredMember{
 
     @Override
     public void execute(MainController context) {
-
-        // 1. 예매 내역 출력 (ReservationDto 기반)
-        List<ReservationDto> reservationDtos = reservationService.viewReservationsAndReturn(member);
-
-        if (reservationDtos.isEmpty()) {
-            System.out.println("예매 내역이 없습니다.");
+        if (member == null) {
+            System.out.println("로그인 후 이용해 주세요.");
             return;
         }
 
+        // 1. 예매 내역 출력 (번호로 선택)
+        List<String> reservations = reservationService.getFormattedReservationsByMember(member);
+
+        if (reservations.isEmpty()) {
+            System.out.println("예매 내역이 없습니다.");
+            return;
+        }
         System.out.println("------------- 예매 내역 -------------");
         for (int i = 0; i < reservations.size(); i++) {
             System.out.println((i + 1) + "번");
@@ -59,23 +53,13 @@ public class CancelCommand implements Command, RequiredMember{
             System.out.println("❌ 취소하지 않았습니다.");
             return;
         }
-        if (reservationId == 0) {
-            System.out.println("예매 취소를 종료합니다.");
-            return;
-        }
-
-        // 3. 예매 취소/환불 실행
-//        List<Screening> allScreenings = movieService.getAllScreenings(); // (환불/좌석반환에 필요)
-        List<Screening> allScreenings = movieService.getScreenings(reservationId);
-
-        // 3. 예약 ID 가져오기
         int reservationId = reservationService.getReservationIdByIndex(member, selected - 1);
         if (reservationId == -1) {
             System.out.println("잘못된 번호입니다.");
             return;
         }
 
-        // 4. 예매 취소 (좌석 삭제 + 결제 환불 + 예매 삭제)
+        // 3. 예매 취소 실행 (환불/좌석반환/예매삭제)
         boolean success = reservationService.cancelReservation(reservationId, member.getLoginId());
         if (success) {
             System.out.println("✅ 예매가 정상적으로 취소되었습니다.");
@@ -83,6 +67,7 @@ public class CancelCommand implements Command, RequiredMember{
             System.out.println("❌ 예매 취소 중 오류가 발생했습니다.");
         }
     }
+
     @Override
     public boolean requiresLogin() {
         return true;
@@ -93,4 +78,3 @@ public class CancelCommand implements Command, RequiredMember{
         this.member=member;
     }
 }
-

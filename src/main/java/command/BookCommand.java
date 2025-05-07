@@ -177,7 +177,7 @@ public class BookCommand implements Command, RequiredMember {
         Map<String, Integer> payMap = payService.pay(member, totalPrice, scanner);
 
         //예매정보 db저장
-        reservationService.save(member, selectedScreening, seatList,payMap.getOrDefault("cash", 0), payMap.getOrDefault("credit", 0));
+        reservationService.save(member, selectedScreening.getId(), seatList,payMap.getOrDefault("cash", 0), payMap.getOrDefault("credit", 0));
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
         String viewChoice = scanner.nextLine();

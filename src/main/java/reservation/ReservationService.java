@@ -1,18 +1,10 @@
 package reservation;
 
 import member.Member;
-import member.MemberService;
-import movie.Movie;
-import movie.Screening;
 import movie.SeatRequest;
-import pay.CashPay;
-import pay.CreditPay;
-import pay.Pay;
-import pay.PayService;
 
 import java.sql.*;
 import java.util.List;
-import java.util.Map;
 
 import static util.ConnectionConst.*;
 
@@ -23,24 +15,41 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public List<String> getReservationsByMember(Member member) {
-        return reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
+    // 예매 내역 번호별 문자열 포맷으로 조회 (번호 선택 UI에 적합)
+    public List<String> getFormattedReservationsByMember(Member member) {
+        return reservationRepository.getFormattedReservationsByMember(member);
     }
 
-    public void save(Member member, Screening screening, List<SeatRequest> seatList, int cash, int credit) {
+    // 예매 내역 DTO 반환 (상세 조회/기타 활용 가능)
+    public void viewReservations(Member member) {
+        List<String> reservations = reservationRepository.getFormattedReservationsByMember(member);
+        if (reservations.isEmpty()) {
+            System.out.println("예매 내역이 없습니다.");
+            return;
+        }
+        System.out.println("====== 나의 예매 내역 ======");
+        for (String line : reservations) {
+            System.out.println(line);
+            System.out.println("---------------------------");
+        }
+    }
+
+    // 인덱스로 예약 id 얻기 (번호 선택 후 내부적으로 reservationId로 변환)
+    public int getReservationIdByIndex(Member member, int index) {
+        return reservationRepository.findReservationIdByIndex(member.getLoginId(), index);
+    }
+
+    // 예약 저장 (예매)
+    public void save(Member member, int screeningId, List<SeatRequest> seatList, int cash, int credit) {
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             conn.setAutoCommit(false);
 
             // 1. 예약 insert (결제 금액 포함)
             int reservationId = reservationRepository.insertReservation(
-                    conn,
-                    member.getLoginId(),
-                    screening.getId(),
-                    cash,
-                    credit
+                    conn, member.getLoginId(), screeningId, cash, credit
             );
 
-            // 2. 좌석 정보 저장 (reservation_seat 테이블)
+            // 2. 좌석 정보 저장
             for (SeatRequest seat : seatList) {
                 reservationRepository.ReservationinsertSeat(conn, reservationId, seat.getRow(), seat.getCol());
             }
@@ -53,89 +62,7 @@ public class ReservationService {
         }
     }
 
-//    public boolean cancelReservation(int reservationId) {
-//        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
-//            // 예매와 좌석 정보 삭제
-//            reservationRepository.deleteSeatsByReservationId(conn, reservationId);
-//            reservationRepository.deleteReservationById(conn, reservationId);
-//            return true;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
-//    public int getReservationIdByIndex(int index) {
-//        // 예약 내역을 가져와서 index에 맞는 예약 ID를 반환
-//        List<String> reservations = reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
-//        if (index >= 0 && index < reservations.size()) {
-//            String reservation = reservations.get(index);
-//            // 예매 정보에서 예약 ID 추출 (예: "예매 1번째" -> 1)
-//            return extractReservationIdFromString(reservation);
-//        }
-//        return -1;
-//    }
-
-    private int extractReservationIdFromString(String reservationInfo) {
-        // 예매 정보에서 예약 ID 추출 (예매 1번째 등)
-        // 예: "예매 1번째"에서 1을 추출하는 로직을 구현
-        String[] parts = reservationInfo.split("\n");
-        String reservationInfoLine = parts[0];  // "예매 1번째"
-        // "예매 1번째"에서 숫자 1을 추출
-        String reservationIdStr = reservationInfoLine.replaceAll("[^0-9]", ""); // 숫자만 남기기
-        try {
-            return Integer.parseInt(reservationIdStr); // 추출한 숫자를 정수로 변환
-        } catch (NumberFormatException e) {
-            System.err.println("예약 ID를 추출할 수 없습니다.");
-            return -1; // 예외가 발생하면 -1 반환
-        }
-    }
-
-//
-//    public void cancelReservation(int reservationId) {
-//        // 1. 좌석정보(ReservationSeat) 삭제
-//        reservationRepository.deleteReservationSeatsByReservationId(reservationId);
-//        // 2. 예약정보(Reservation) 삭제
-//        reservationRepository.deleteReservationById(reservationId);
-//    }
-    public List<String> getFormattedReservationsByMember(Member member) {
-        return reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
-    }
-
-    public int getReservationIdByIndex(Member member, int index) {
-        return reservationRepository.findReservationIdByIndex(member.getLoginId(), index);
-    }
-
-    public void viewReservations(Member member) {
-        List<ReservationDto> reservations = reservationRepository.findReservationsByMember(member);
-        for (ReservationDto reservation : reservations) {
-            System.out.println(reservation.movie.getTitle());
-            System.out.println(reservation.screening.getScreeningDate() + " "+ reservation.screening.getStartTime()+"~"+reservation.screening.getEndTime());
-            System.out.println(reservation.theater.getLocation());
-            //좌석 출력 해야 함
-            System.out.println("결제 내역");
-            System.out.println("현금: " + reservation.reservation.getCash() + ", 카드 : " + reservation.reservation.getCredit());
-        }
-    }
-
-/*
-    // 예매 취소(좌석+예매 삭제, 반환값=환불금액)
-    public void cancelReservation(int reservationId, Member member, MemberService memberService, List<Screening> allScreenings) {
-        Reservation reservation = reservationRepository.findReservationById(reservationId, allScreenings);
-
-        int refundCash = reservation.getCash();
-        int refundCredit = reservation.getCredit();
-
-        reservationRepository.deleteReservationSeatsByReservationId(reservationId);
-        reservationRepository.deleteReservationById(reservationId);
-
-        memberService.refundBudget(member, refundCash, refundCredit);
-    }
-
- */
-
-    public List<ReservationDto> viewReservationsAndReturn(Member member) {
-        List<ReservationDto> reservations = reservationRepository.findReservationsByMember(member);
+    // 예약 취소 (환불 + 좌석반환 + 예매삭제)
     public boolean cancelReservation(int reservationId, String loginId) {
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             conn.setAutoCommit(false);
