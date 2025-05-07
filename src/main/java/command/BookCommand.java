@@ -52,7 +52,7 @@ public class BookCommand implements Command, RequiredMember {
             }
         }
 
-// 1.2 나이 제한 체크!
+        // 1.2 나이 제한 체크!
         if (member.getAge() < selectedMovie.getAge()) {
             System.out.println("❌ 청소년 관람불가 영화입니다. 예매하실 수 없습니다.");
             return;
