@@ -28,21 +28,20 @@ public class MovieRepository {
         }
     }
 
-    public Movie findByTitle(String name) {
-        String sql = "SELECT id, title, price, age FROM movie WHERE title = ?";
+    // 영화 ID로 영화 조회
+    public Movie findById(int id) {
+        String sql = "SELECT id, title, price, age FROM movie WHERE id = ?";
+
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
+
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    int id = rs.getInt("id");
                     String title = rs.getString("title");
                     int price = rs.getInt("price");
                     int age = rs.getInt("age");
-                    Movie movie = new Movie(id, title, price, age); // 생성자에 price/age 추가되어 있으면 거기에 맞게 생성
-                    movie.setPrice(price); // setPrice/setAge 필요
-                    movie.setAge(age);
-                    return movie;
+                    return new Movie(id, title, price, age);
                 }
             }
         } catch (SQLException e) {

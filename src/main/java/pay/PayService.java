@@ -4,13 +4,14 @@ import exception.CustomException;
 import member.Member;
 import member.MemberService;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class PayService {
 
     private MemberService memberService;
-    private Map<String, Integer> payMap;
+    private Map<String, Integer> payMap = new HashMap<>();;
 
     public PayService(MemberService memberService) {
         this.memberService = memberService;
