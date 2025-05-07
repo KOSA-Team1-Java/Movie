@@ -66,20 +66,7 @@ public class SignUpCommand implements Command {
             }
         }
 
-        // 이메일 입력 및 정규 표현식 검증
-        String email = null;
-        while (true) {
-            System.out.print("Email : ");
-            email = scanner.nextLine();
-            if (isValidEmail(email)) {
-                break;
-            } else {
-                System.out.println("❌ 유효한 이메일 형식이 아닙니다.");
-            }
-        }
-
-        // 이메일을 포함한 Member 객체 생성
-        memberService.signUp(id, password, name, age, email);  // 회원가입 처리
+        memberService.signUp(id, password, name, age);  // 회원가입 처리
 
     }
 
@@ -100,10 +87,4 @@ public class SignUpCommand implements Command {
         return password.length() >= 4;
     }
 
-    // 이메일 형식 검증을 위한 정규 표현식 메서드
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        return pattern.matcher(email).matches();
-    }
 }

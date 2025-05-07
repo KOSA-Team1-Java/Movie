@@ -65,27 +65,27 @@ public class MovieService {
                 .collect(Collectors.toList());
     }
 
-    // 4 단계: 영화 ID + 지역으로 해당하는 상영 리스트 반환
-    public List<Screening> getScreeningsByMovieAndLocation(int movieId, String location) {
-        // 지역 필터링
-        List<Screening> screenings = movieRepository.findScreeningsByMovieAndLocation(movieId, location);
-        return screenings;
-    }
+//    // 4 단계: 영화 ID + 지역으로 해당하는 상영 리스트 반환
+//    public List<Screening> getScreeningsByMovieAndLocation(int movieId, String location) {
+//        // 지역 필터링
+//        List<Screening> screenings = movieRepository.findScreeningsByMovieAndLocation(movieId, location);
+//        return screenings;
+//    }
 
-    // 5 단계 : 지역을 선택한 후 상영 정보 출력
-    public void showScreeningByLocation(int movieId, String location) {
-        List<Screening> screenings = getScreeningsByMovieAndLocation(movieId, location);
-
-        if (screenings.isEmpty()) {
-            System.out.println("No screenings available for this movie at this location.");
-        } else {
-            for (Screening screening : screenings) {
-                System.out.println("Screening ID: " + screening.getId());
-                System.out.println("Theater: " + screening.getTheater().getLocation() + " " + screening.getTheater());
-                System.out.println("Day: " + screening.getScreeningDate());
-                System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
-                System.out.println("-------------------------------");
-            }
-        }
-    }
+//    // 5 단계 : 지역을 선택한 후 상영 정보 출력
+//    public void showScreeningByLocation(int movieId, String location) {
+//        List<Screening> screenings = getScreeningsByMovieAndLocation(movieId, location);
+//
+//        if (screenings.isEmpty()) {
+//            System.out.println("No screenings available for this movie at this location.");
+//        } else {
+//            for (Screening screening : screenings) {
+//                System.out.println("Screening ID: " + screening.getId());
+//                System.out.println("Theater: " + screening.getTheater().getLocation() + " " + screening.getTheater());
+//                System.out.println("Day: " + screening.getScreeningDate());
+//                System.out.println("Time: " + screening.getStartTime() + " ~ " + screening.getEndTime());
+//                System.out.println("-------------------------------");
+//            }
+//        }
+//    }
 }
