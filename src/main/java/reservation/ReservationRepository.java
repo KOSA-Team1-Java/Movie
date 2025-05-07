@@ -98,8 +98,11 @@ public class ReservationRepository {
         }
 
         List<String> formattedReservations = new ArrayList<>();
+        int reservationNumber = 1;  // 예약 번호를 1부터 시작
+
+        // 예약 번호 추가하여 출력
         for (ReservationInfo info : reservationMap.values()) {
-            formattedReservations.add(info.format());
+            formattedReservations.add("예매 " + reservationNumber++ + "번째\n" + info.format());
         }
         return formattedReservations;
     }

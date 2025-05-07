@@ -9,15 +9,19 @@ public class Reservation {
     private int id;
     private Member member;
     private Screening screening;
+    private int cash;
+    private int credit;
     private int peopleCount;
     private int totalPrice;  //결제 금액
 
     // 생성자
-    public Reservation(int id, Screening screening, int peopleCount, Member member) {
+    public Reservation(int id, Screening screening, int peopleCount, Member member,int cash, int credit) {
         this.id = id;
         this.screening = screening;
         this.peopleCount = peopleCount;
         this.member = member;
+        this.credit = credit;
+        this.cash = cash;
         this.totalPrice = calculateTotalPrice();  // 가격 계산
     }
 
