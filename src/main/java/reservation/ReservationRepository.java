@@ -1,20 +1,22 @@
 package reservation;
 
-import movie.Screening;
-
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static util.ConnectionConst.*;
 
 public class ReservationRepository {
 
-    public int insertReservation(Connection conn, String memberLoginId, int screeningId) throws SQLException {
-        String sql = "INSERT INTO reservation (member_loginId, screening_id) VALUES (?, ?)";
+    public int insertReservation(Connection conn, String memberLoginId, int screeningId, int cash, int credit) throws SQLException {
+        String sql = "INSERT INTO reservation (member_loginId, screening_id, cash, credit) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, memberLoginId);
             pstmt.setInt(2, screeningId);
+            pstmt.setInt(3, cash);
+            pstmt.setInt(4, credit);
             pstmt.executeUpdate();
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {

@@ -39,23 +39,10 @@ public class MemberService {
         memberRepository.updateBudget(member);
     }
 
-
     public void refundBudget(Member member, int refundAmount) {
         // 회원 객체의 cash/credit에 금액을 더해주기 (여기선 example로 cash에 환불)
         member.setCash(member.getCash() + refundAmount);
-
-        // DB에도 예산 변경 반영 (cash 기준)
-        String sql = "UPDATE member SET cash = ? WHERE loginid = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, member.getCash());
-            pstmt.setString(2, member.getLoginId());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
-
 
     public Member updateName(Member member, String newName) {
         return memberRepository.updateName(member, newName);

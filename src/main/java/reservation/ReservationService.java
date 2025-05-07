@@ -16,15 +16,14 @@ public class ReservationService {
 
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
-
-
     }
-    public void save(Member member, Screening screening, List<SeatRequest> seatList) {
+
+    public void save(Member member, Screening screening, List<SeatRequest> seatList, int cash, int credit) {
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             conn.setAutoCommit(false); // 트랜잭션 시작
 
             // 1. reservation 테이블에 저장
-            int reservationId = reservationRepository.insertReservation(conn, member.getLoginId(), screening.getId());
+            int reservationId = reservationRepository.insertReservation(conn, member.getLoginId(), screening.getId(), cash, credit);
 
             // 2. 좌석 정보 저장 (reservation_seat 테이블)
             for (SeatRequest seat : seatList) {

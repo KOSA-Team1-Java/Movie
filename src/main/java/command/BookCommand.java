@@ -13,10 +13,7 @@ import reservation.ReservationService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BookCommand implements Command, RequiredMember {
@@ -123,7 +120,6 @@ public class BookCommand implements Command, RequiredMember {
             return;
         }
 
-
         // 4단계: 선택된 상영 정보 출력
         Screening selectedScreening = new Screening();
         for (Screening screening : filterByLocationScreening) {
@@ -144,7 +140,7 @@ public class BookCommand implements Command, RequiredMember {
         int peopleCount = scanner.nextInt();
         scanner.nextLine();
 
-//        //좌석표 출력
+        //좌석표 출력
         int availableSeats = movieService.getAvailableSeatsByScreening(selectedScreening);
         System.out.println("이용가능좌석: " + availableSeats);
         movieService.printSeatMap(selectedScreening.getId());
@@ -176,10 +172,10 @@ public class BookCommand implements Command, RequiredMember {
         //결제
         PayService payService = new PayService(memberService);
         int totalPrice = selectedMovie.getPrice() * seatList.size();
-        payService.pay(member, totalPrice, scanner);
+        Map<String, Integer> payMap = payService.pay(member, totalPrice, scanner);
 
         //예매정보 db저장
-        reservationService.save(member, selectedScreening, seatList);
+        reservationService.save(member, selectedScreening, seatList, payMap.get("cash"), payMap.get("credit"));
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
         String viewChoice = scanner.nextLine();
@@ -204,18 +200,8 @@ public class BookCommand implements Command, RequiredMember {
             System.out.println(); // 줄바꿈
             System.out.println("-----------------------------------");
         }
+    }
 
-        System.out.print("취소할 내역이 있습니까? (y/n): ");
-        String answer = scanner.nextLine().trim().toLowerCase();
-
-        if ("y".equals(answer)) {
-            // 반드시 새롭게 CancelCommand를 실행하면서 member(loginId) 정보만 넘김
-            CancelCommand cancelCommand = new CancelCommand(memberService, reservationService, scanner);
-            cancelCommand.setMember(member);
-            cancelCommand.execute(context);
-        }
-
-        }
     @Override
     public boolean requiresLogin() {
         return true;
