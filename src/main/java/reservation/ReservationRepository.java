@@ -1,6 +1,9 @@
 package reservation;
 
 import member.Member;
+import movie.Movie;
+import movie.Screening;
+import movie.Theater;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -69,26 +72,83 @@ public class ReservationRepository {
     }
 
     public List<ReservationDto> findReservationsByMember(Member member) {
-        List<ReservationDto> reservationDto = new ArrayList<>();
-        String sql = "SELECT r.id, mv.title, r.screening_id, s.screeningdate, s.starttime, s.endtime, th.location, " +
-                "rs.seat_row, rs.seat_col " +
+        Map<Integer, ReservationDto> reservationMap = new LinkedHashMap<>();
+        String sql = "SELECT r.id as reservation_id, " +
+                "mv.id, mv.title, mv.price, mv.age, " +
+                "s.id as screening_id, s.screeningdate, s.starttime, s.endtime, " +
+                "th.id as theater_id, th.location, th.totalSeat, " +
+                "r.cash, r.credit, " +
+                "rs.id as seat_id, rs.seat_row, rs.seat_col " +
                 "FROM reservation r " +
                 "JOIN screening s ON r.screening_id = s.id " +
                 "JOIN movie mv ON s.movie_id = mv.id " +
                 "JOIN reservationseat rs ON r.id = rs.reservation_id " +
                 "JOIN theater th ON s.theater_id = th.id " +
-                "WHERE r.member_loginId = ?";
+                "WHERE r.member_loginId = ? " +
+                "ORDER BY r.id, rs.id";
 
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, member.getLoginId());
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
+                    int reservationId = rs.getInt("reservation_id");
+                    ReservationDto dto = reservationMap.get(reservationId);
+
+                    if (dto == null) {
+                        // Builder로 객체 생성
+                        Movie movie = Movie.builder()
+                                .id(rs.getInt("id"))               // mv.id
+                                .title(rs.getString("title"))
+                                .price(rs.getInt("price"))
+                                .age(rs.getInt("age"))
+                                .build();
+
+                        Screening screening = Screening.builder()
+                                .id(rs.getInt("screening_id"))
+                                .screeningDate(rs.getDate("screeningdate").toLocalDate())
+                                .startTime(rs.getTime("starttime").toLocalTime())
+                                .endTime(rs.getTime("endtime").toLocalTime())
+                                .build();
+
+                        Theater theater = Theater.builder()
+                                .id(rs.getInt("theater_id"))
+                                .location(rs.getString("location"))
+                                .totalSeat(rs.getInt("totalSeat"))
+                                .build();
+
+                        Reservation reservation = Reservation.builder()
+                                .id(reservationId)
+                                .cash(rs.getInt("cash"))
+                                .credit(rs.getInt("credit"))
+                                .build();
+
+                        // 좌석은 Builder에 빈 리스트로, 아래서 add
+                        dto = ReservationDto.builder()
+                                .movie(movie)
+                                .screening(screening)
+                                .theater(theater)
+                                .reservation(reservation)
+                                .seats(new ArrayList<>())
+                                .build();
+
+                        reservationMap.put(reservationId, dto);
+                    }
+                    // 좌석 생성 및 추가
+                    ReservationSeat seat = ReservationSeat.builder()
+                            .id(rs.getInt("seat_id"))
+                            .seatRow(rs.getString("seat_row").charAt(0))
+                            .seatCol(rs.getInt("seat_col"))
+                            .build();
+
+                    dto.getSeats().add(seat);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        return new ArrayList<>(reservationMap.values());
     }
+
+
 }

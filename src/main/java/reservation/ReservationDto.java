@@ -1,5 +1,7 @@
 package reservation;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import movie.Movie;
 import movie.Screening;
@@ -9,11 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class ReservationDto {
     Movie movie;
     Screening screening;
     Theater theater;
     Reservation reservation;
-    // 영화관 위치
-    List<String> seats = new ArrayList<>();
+    List<ReservationSeat> seats = new ArrayList<>();
 }

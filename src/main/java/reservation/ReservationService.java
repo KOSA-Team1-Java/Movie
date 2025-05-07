@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static util.ConnectionConst.*;
 
@@ -40,16 +41,41 @@ public class ReservationService {
 
     public void viewReservations(Member member) {
         List<ReservationDto> reservations = reservationRepository.findReservationsByMember(member);
+
+        if (reservations.isEmpty()) {
+            System.out.println("예매 내역이 없습니다.");
+            return;
+        }
+
         for (ReservationDto reservation : reservations) {
-            System.out.println(reservation.movie.getTitle());
-            System.out.println(reservation.screening.getScreeningDate() + " "+ reservation.screening.getStartTime()+"~"+reservation.screening.getEndTime());
-            System.out.println(reservation.theater.getLocation());
-            //좌석 출력 해야 함
+            // 영화 제목
+            System.out.println(reservation.getMovie().getTitle());
+
+            // 날짜, 시작~종료 시간
+            System.out.println(
+                    reservation.getScreening().getScreeningDate() + " " +
+                            reservation.getScreening().getStartTime() + " ~ " +
+                            reservation.getScreening().getEndTime()
+            );
+
+            // 극장 위치
+            System.out.println(reservation.getTheater().getLocation());
+
+            // 좌석 정보 출력: 2명 A1, A2 형식
+            int seatCount = reservation.getSeats().size();
+            String seatNames = reservation.getSeats().stream()
+                    .map(seat -> seat.getSeatRow() + String.valueOf(seat.getSeatCol()))
+                    .collect(Collectors.joining(", "));
+            System.out.println(seatCount + "명 " + seatNames);
+
+            // 결제 내역
             System.out.println("결제 내역");
-            System.out.println("현금: " + reservation.reservation.getCash() + ", 카드 : " + reservation.reservation.getCredit());
+            System.out.println("현금: " + reservation.getReservation().getCash()
+                    + ", 카드: " + reservation.getReservation().getCredit());
+
+            System.out.println("-------------------------------------");
         }
     }
-
 
     public void cancelReservation(int reservationId) {
         // 1. 좌석정보(ReservationSeat) 삭제
