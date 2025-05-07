@@ -1,5 +1,7 @@
 package reservation;
 
+import member.Member;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -66,9 +68,8 @@ public class ReservationRepository {
         return reservedSeats;
     }
 
-    // 회원 로그인 ID로 예약 내역을 조회하는 메서드
-    public List<String> findReservationsByMemberLoginId(String loginId) {
-        Map<Integer, ReservationInfo> reservationMap = new LinkedHashMap<>();
+    public List<ReservationDto> findReservationsByMember(Member member) {
+        List<ReservationDto> reservationDto = new ArrayList<>();
         String sql = "SELECT r.id, mv.title, r.screening_id, s.screeningdate, s.starttime, s.endtime, th.location, " +
                 "rs.seat_row, rs.seat_col " +
                 "FROM reservation r " +
@@ -80,73 +81,14 @@ public class ReservationRepository {
 
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, loginId);
+            pstmt.setString(1, member.getLoginId());
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    int reservationId = rs.getInt("id");
-                    String title = rs.getString("title");
-                    int screeningId = rs.getInt("screening_id");
-
-                    // 날짜 및 시간 컬럼을 적절히 가져오기
-                    java.sql.Date screeningDate = rs.getDate("screeningdate"); // 날짜
-                    java.sql.Time startTime = rs.getTime("starttime"); // 시작 시간
-                    java.sql.Time endTime = rs.getTime("endtime"); // 종료 시간
-                    String location = rs.getString("location");  // 영화관 위치 (이제 location으로 사용)
-
-                    String seat = rs.getString("seat_row") + rs.getInt("seat_col");
-
-                    // 예약 ID로 정보 집합을 묶어 저장
-                    reservationMap
-                            .computeIfAbsent(reservationId, id -> new ReservationInfo(id, title, screeningId, screeningDate, startTime, endTime, location))
-                            .addSeat(seat);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        List<String> formattedReservations = new ArrayList<>();
-        for (ReservationInfo info : reservationMap.values()) {
-            formattedReservations.add(info.format());
-        }
-        return formattedReservations;
-    }
-
-    private static class ReservationInfo {
-        int reservationId;
-        String movieTitle;
-        int screeningId;
-        java.sql.Date screeningDate;
-        java.sql.Time startTime;
-        java.sql.Time endTime;
-        String location;  // 영화관 위치
-        List<String> seats = new ArrayList<>();
-
-        public ReservationInfo(int reservationId, String movieTitle, int screeningId, java.sql.Date screeningDate,
-                               java.sql.Time startTime, java.sql.Time endTime, String location) {
-            this.reservationId = reservationId;
-            this.movieTitle = movieTitle;
-            this.screeningId = screeningId;
-            this.screeningDate = screeningDate;
-            this.startTime = startTime;
-            this.endTime = endTime;
-            this.location = location;
-        }
-
-        public void addSeat(String seat) {
-            seats.add(seat);
-        }
-
-        public String format() {
-            // 날짜와 시간을 원하는 형식으로 변환
-            String formattedDate = String.format("%1$tY.%1$tm.%1$td (%1$tA)", screeningDate);
-            String formattedStartTime = String.format("%1$tH:%1$tM", startTime);
-            String formattedEndTime = String.format("%1$tH:%1$tM", endTime);
-            String formattedSeats = String.join(", ", seats);
-            String totalPeople = String.format("%d명", seats.size());
-
-            return String.format("%s\n%s %s ~ %s\n%s / %s\n좌석: %s",
-                    movieTitle, formattedDate, formattedStartTime, formattedEndTime, location, totalPeople, formattedSeats);
-        }
     }
 }

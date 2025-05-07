@@ -38,9 +38,16 @@ public class ReservationService {
         }
     }
 
-
-    public List<Integer> getReservationsByMember(String loginId) {
-        return reservationRepository.findReservationIdsByMemberLoginId(loginId);
+    public void viewReservations(Member member) {
+        List<ReservationDto> reservations = reservationRepository.findReservationsByMember(member);
+        for (ReservationDto reservation : reservations) {
+            System.out.println(reservation.movie.getTitle());
+            System.out.println(reservation.screening.getScreeningDate() + " "+ reservation.screening.getStartTime()+"~"+reservation.screening.getEndTime());
+            System.out.println(reservation.theater.getLocation());
+            //좌석 출력 해야 함
+            System.out.println("결제 내역");
+            System.out.println("현금: " + reservation.reservation.getCash() + ", 카드 : " + reservation.reservation.getCredit());
+        }
     }
 
 
