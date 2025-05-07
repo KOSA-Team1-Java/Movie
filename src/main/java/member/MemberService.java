@@ -1,15 +1,7 @@
 package member;
 
-import exception.MovieException;
-import pay.Pay;
+import exception.CustomException;
 import util.PasswordHasher;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import static util.ConnectionConst.*;
 
 public class MemberService {
 
@@ -19,19 +11,19 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public void signUp(String id, String password, String name, int age, String email)  throws MovieException {
-        Member member = new Member(id, password, name, age, email);
+    public void signUp(String id, String password, String name, int age) throws CustomException {
+        Member member = new Member(id, password, name, age);
         memberRepository.save(member);
     }
 
-    public Member login(String id, String password) throws MovieException {
+    public Member login(String id, String password) {
         Member member = memberRepository.findById(id);
         if (member == null) {
-            throw new MovieException("존재하지 않는 회원입니다.");
+            throw new CustomException("존재하지 않는 회원입니다.");
         }
         String hashPassword = PasswordHasher.hash(password);
         if (!member.getPassword().equals(hashPassword)) {
-            throw new MovieException("존재하지 않는 회원입니다.");
+            throw new CustomException("존재하지 않는 회원입니다.");
         }
         return member;
     }
@@ -40,27 +32,18 @@ public class MemberService {
         memberRepository.updateBudget(member);
     }
 
-
     public void refundBudget(Member member, int refundAmount) {
         // 회원 객체의 cash/credit에 금액을 더해주기 (여기선 example로 cash에 환불)
-        member.setCash(member.getCash() + refundAmount);
-
-        // DB에도 예산 변경 반영 (cash 기준)
-        String sql = "UPDATE member SET cash = ? WHERE loginid = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, member.getCash());
-            pstmt.setString(2, member.getLoginId());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        member.setCash(member.getCash() + refundAmount);
     }
 
+    public Member updateName(Member member, String newName) {
+        member.updateName(newName);
+        return memberRepository.updateName(member);
+    }
 
-    public void processPayment(Member member, Pay payMethod, int amount) {
-
-
-        member.addPaymentHistory(amount); // 회원 결제 내역 저장
+    public void updatePassword(Member member, String newPassword) {
+        member.updatePassword(PasswordHasher.hash(newPassword));
+        memberRepository.updatePassword(member);
     }
 }

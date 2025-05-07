@@ -1,7 +1,6 @@
 package command;
 
 import controller.MainController;
-import exception.ExceptionController;
 import member.MemberService;
 
 import java.util.Scanner;
@@ -11,12 +10,10 @@ import java.util.regex.Pattern;
 public class SignUpCommand implements Command {
 
     private final MemberService memberService;
-    private final ExceptionController exceptionController;
     private final Scanner scanner;
 
-    public SignUpCommand(MemberService memberService, ExceptionController exceptionController, Scanner scanner) {
+    public SignUpCommand(MemberService memberService, Scanner scanner) {
         this.memberService = memberService;
-        this.exceptionController = exceptionController;
         this.scanner = scanner;
     }
 
@@ -82,11 +79,8 @@ public class SignUpCommand implements Command {
         }
 
         // 이메일을 포함한 Member 객체 생성
-        try {
-            memberService.signUp(id, password, name, age, email);  // 회원가입 처리
-        } catch (Exception e) {
-            exceptionController.signUpError(e);
-        }
+        memberService.signUp(id, password, name, age, email);  // 회원가입 처리
+
     }
 
     @Override

@@ -1,7 +1,7 @@
 package command;
 
 import controller.MainController;
-import exception.MovieException;
+import exception.CustomException;
 import member.Member;
 import member.MemberService;
 import movie.Movie;
@@ -13,10 +13,7 @@ import reservation.ReservationService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BookCommand implements Command, RequiredMember {
@@ -34,12 +31,7 @@ public class BookCommand implements Command, RequiredMember {
     }
 
     @Override
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
-    @Override
-    public void execute(MainController context) throws MovieException {
+    public void execute(MainController context) throws CustomException {
         // 1단계: 영화 목록 출력
         System.out.println("상영 중인 영화");
         movieService.showMovie(); // 영화 목록 출력 (영화 ID 포함)
@@ -130,7 +122,6 @@ public class BookCommand implements Command, RequiredMember {
             return;
         }
 
-
         // 4단계: 선택된 상영 정보 출력
         Screening selectedScreening = new Screening();
         for (Screening screening : filterByLocationScreening) {
@@ -183,10 +174,10 @@ public class BookCommand implements Command, RequiredMember {
         //결제
         PayService payService = new PayService(memberService);
         int totalPrice = selectedMovie.getPrice() * seatList.size();
-        payService.pay(member, totalPrice, scanner);
+        Map<String, Integer> payMap = payService.pay(member, totalPrice, scanner);
 
         //예매정보 db저장
-        reservationService.save(member, selectedScreening, seatList);
+        reservationService.save(member, selectedScreening, seatList, payMap.get("cash"), payMap.get("credit"));
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
         String viewChoice = scanner.nextLine();
@@ -210,8 +201,14 @@ public class BookCommand implements Command, RequiredMember {
             }
             System.out.println(); // 줄바꿈
             System.out.println("-----------------------------------");
-            }
         }
+    }
+
+    @Override
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
     @Override
     public boolean requiresLogin() {
         return true;

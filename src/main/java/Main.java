@@ -18,13 +18,13 @@ public class Main {
         PrintStream printStream = new PrintStream(System.out, true, "UTF-8");
 
         MemberRepository memberRepository = new MemberRepository();
-        MemberService memberService = new MemberService(memberRepository);
         MovieRepository movieRepository = new MovieRepository();
         ReservationRepository reservationRepository = new ReservationRepository();
+        MemberService memberService = new MemberService(memberRepository);
         MovieService movieService = new MovieService(movieRepository, reservationRepository);
         ReservationService reservationService = new ReservationService(reservationRepository);
         ExceptionController exceptionController = new ExceptionController();
-        MainController mainController = new MainController(memberService, movieService, reservationService, exceptionController, scanner, reservationRepository);
+        MainController mainController = new MainController(memberService, movieService, reservationService, exceptionController, scanner);
 
         printStream.println("🎞️🎬🎥📽️1조 영화관에 오신 걸 환영합니다.📽️🎥🎬🎞️");
 
