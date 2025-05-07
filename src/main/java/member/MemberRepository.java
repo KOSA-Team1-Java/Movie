@@ -1,6 +1,7 @@
 package member;
 
-import exception.MovieException;
+import exception.DataAccessException;
+import exception.UpdateException;
 import util.PasswordHasher;
 
 import java.sql.*;
@@ -23,7 +24,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
             System.out.println("successfully signup");
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new DataAccessException("회원가입 중 오류 발생 ", e);
         }
     }
 
@@ -44,7 +45,7 @@ public class MemberRepository {
                 return new Member(id, password, name, age, cash, credit);
             }
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new DataAccessException("회원을 찾을 수 없습니다.", e);
         }
         return null;
     }
@@ -53,13 +54,44 @@ public class MemberRepository {
         String sql = "UPDATE member SET cash = ?, credit =? WHERE loginid = ?";
         try(Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, member.getCash());
             pstmt.setInt(2, member.getCredit());
             pstmt.setString(3, member.getLoginId());
             pstmt.executeUpdate();
+
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new UpdateException("잔액 업데이트 오류 발생", e);
         }
         return member;
+    }
+
+    public Member updateName(Member member) {
+        String sql = "UPDATE member SET name = ? WHERE loginid = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, member.getName());
+            pstmt.setString(2, member.getLoginId());
+            pstmt.executeUpdate();
+
+            return member; // 변경된 객체를 반환
+        } catch (SQLException e) {
+            throw new UpdateException("이름 업데이트 중 오류 발생", e);
+        }
+    }
+
+    public void updatePassword(Member member) {
+        String sql = "UPDATE member SET password = ? WHERE loginid = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, member.getPassword());
+            pstmt.setString(2, member.getLoginId());
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new UpdateException("비밀 번호 업데이트 중 오류 발생", e);
+        }
     }
 }

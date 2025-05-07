@@ -5,30 +5,32 @@ import exception.ExceptionController;
 import member.Member;
 import member.MemberService;
 import movie.MovieService;
-import reservation.ReservationRepository;
 import reservation.ReservationService;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class MainController {
 
-    private final Map<String, Command> commandMap = new HashMap<>();
+    private final Map<String, Command> commandMap = new LinkedHashMap<>();
+    private final ExceptionController exceptionController;
     private Member loginMember = null;
     public void setLoginMember(Member m) { loginMember = m; }
     public boolean isLoggedIn() { return loginMember != null; }
 
-    public MainController(MemberService memberService, MovieService movieService, ReservationService reservationService,
-                          ExceptionController exceptionController, Scanner scanner, ReservationRepository reservationRepository) {
-        commandMap.put("/signup", new SignUpCommand(memberService, exceptionController, scanner));
-        commandMap.put("/login", new LoginCommand(memberService, exceptionController, scanner));
+    public MainController(MemberService memberService, MovieService movieService, ReservationService reservationService, ExceptionController exceptionController, Scanner scanner) {
+        this.exceptionController = exceptionController;
+        commandMap.put("/signup", new SignUpCommand(memberService, scanner));
+        commandMap.put("/login", new LoginCommand(memberService, scanner));
         commandMap.put("/logout", new LogoutCommand());
+        commandMap.put("/changeName", new ChangeNameCommand(memberService, scanner));
+        commandMap.put("/changePW", new ChangePasswordCommand(memberService, scanner));
         commandMap.put("/book", new BookCommand(memberService, movieService, reservationService, scanner));
-        commandMap.put("/movie",new MoviesCommand(movieService, scanner));
-        commandMap.put("/checkReservation", new CheckReservationCommand(reservationRepository));
+        commandMap.put("/checkReservation", new CheckReservationCommand(reservationService));
+        commandMap.put("/movieList",new MoviesCommand(movieService));
         commandMap.put("/cancel", new CancelCommand(memberService, movieService, reservationService, scanner));
-        commandMap.put("/command", new CommandListCommand());
+        commandMap.put("/command", new CommandListCommand(commandMap.keySet()));
     }
 
     public void call(String command) {
@@ -49,6 +51,11 @@ public class MainController {
         if (cmd.requiresLogin() && isLoggedIn() && cmd instanceof RequiredMember) {
             ((RequiredMember) cmd).setMember(loginMember);
         }
-        cmd.execute(this); // 상태 변화는 각 command 내부에서 setLoginMember 등
+        //실행
+        try {
+            cmd.execute(this);
+        } catch (Exception e) {
+            exceptionController.handle(e);
+        }
     }
 }

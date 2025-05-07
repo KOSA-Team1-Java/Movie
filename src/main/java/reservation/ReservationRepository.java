@@ -4,7 +4,10 @@ import member.Member;
 import movie.Screening;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static util.ConnectionConst.*;
 
@@ -40,7 +43,6 @@ public class ReservationRepository {
                 e.printStackTrace();
             }
         } catch (SQLException e) {
-            System.err.println("데이터베이스 연결 오류: " + e.getMessage());
             e.printStackTrace();
         }
         return -1;
@@ -259,6 +261,30 @@ public class ReservationRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<ReservationDto> findReservationsByMember(Member member) {
+        List<ReservationDto> reservationDto = new ArrayList<>();
+        String sql = "SELECT r.id, mv.title, r.screening_id, s.screeningdate, s.starttime, s.endtime, th.location, " +
+                "rs.seat_row, rs.seat_col " +
+                "FROM reservation r " +
+                "JOIN screening s ON r.screening_id = s.id " +
+                "JOIN movie mv ON s.movie_id = mv.id " +
+                "JOIN reservationseat rs ON r.id = rs.reservation_id " +
+                "JOIN theater th ON s.theater_id = th.id " +
+                "WHERE r.member_loginId = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, member.getLoginId());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reservationDto;
     }
 
 }

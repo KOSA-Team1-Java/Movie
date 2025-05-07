@@ -1,15 +1,17 @@
 package movie;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Screening {
     private int id;
     private Movie movie;
@@ -17,35 +19,4 @@ public class Screening {
     private LocalDate screeningDate;
     private LocalTime startTime;
     private LocalTime endTime;
-
-    public Screening(int id, Movie movie, Theater theater, LocalDate screeningDate, LocalTime startTime, LocalTime endTime) {
-        this.id = id;
-        this.movie = movie;
-        this.theater = theater;
-        this.screeningDate = screeningDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-    public int getTotalSeats() {
-        return theater.getTotalSeat();
-    }
-
-    public void setId(int screeningId) {
-    }
-
-    public void setMovie(Movie movie) {
-    }
-
-    public void setScreeningDate(Date screeningDate) {
-    }
-
-    public void setTheater(Theater theater) {
-    }
-
-    public void setStartTime(Time startTime) {
-    }
-
-    public void setEndTime(Time endTime) {
-
-    }
 }

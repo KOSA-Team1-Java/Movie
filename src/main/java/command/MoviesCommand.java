@@ -3,15 +3,11 @@ package command;
 import controller.MainController;
 import movie.MovieService;
 
-import java.util.Scanner;
-
 public class MoviesCommand implements Command {
     private final MovieService movieService;
-    private final Scanner scanner;
 
-    public MoviesCommand(MovieService movieService, Scanner scanner) {
+    public MoviesCommand(MovieService movieService) {
         this.movieService = movieService;
-        this.scanner = scanner;
     }
 
     @Override

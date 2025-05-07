@@ -17,8 +17,6 @@ public class ReservationService {
 
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
-
-
     }
 
     public void save(Member member, Screening screening, List<SeatRequest> seatList, int cash, int credit) {
@@ -41,17 +39,29 @@ public class ReservationService {
         }
     }
 
+    public void viewReservations(Member member) {
+        List<ReservationDto> reservations = reservationRepository.findReservationsByMember(member);
+        for (ReservationDto reservation : reservations) {
+            System.out.println(reservation.movie.getTitle());
+            System.out.println(reservation.screening.getScreeningDate() + " "+ reservation.screening.getStartTime()+"~"+reservation.screening.getEndTime());
+            System.out.println(reservation.theater.getLocation());
+            //좌석 출력 해야 함
+            System.out.println("결제 내역");
+            System.out.println("현금: " + reservation.reservation.getCash() + ", 카드 : " + reservation.reservation.getCredit());
+        }
+    }
 
-     // 예매 취소(좌석+예매 삭제, 반환값=환불금액)
-     public void cancelReservation(int reservationId, Member member, MemberService memberService, List<Screening> allScreenings) {
-         Reservation reservation = reservationRepository.findReservationById(reservationId, allScreenings);
 
-         int refundCash = reservation.getCash();
-         int refundCredit = reservation.getCredit();
+    // 예매 취소(좌석+예매 삭제, 반환값=환불금액)
+    public void cancelReservation(int reservationId, Member member, MemberService memberService, List<Screening> allScreenings) {
+        Reservation reservation = reservationRepository.findReservationById(reservationId, allScreenings);
 
-         reservationRepository.deleteReservationSeatsByReservationId(reservationId);
-         reservationRepository.deleteReservationById(reservationId);
+        int refundCash = reservation.getCash();
+        int refundCredit = reservation.getCredit();
 
-         memberService.refundBudget(member, refundCash, refundCredit);
-     }
+        reservationRepository.deleteReservationSeatsByReservationId(reservationId);
+        reservationRepository.deleteReservationById(reservationId);
+
+        memberService.refundBudget(member, refundCash, refundCredit);
+    }
 }
