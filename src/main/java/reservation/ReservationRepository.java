@@ -57,7 +57,7 @@ public class ReservationRepository {
         String sql = "SELECT r.id as reservation_id, " +
                 "mv.id, mv.title, mv.price, mv.age, " +
                 "s.id as screening_id, s.screeningdate, s.starttime, s.endtime, " +
-                "th.id as theater_id, th.location, th.totalSeat, " +
+                "th.id as theater_id, th.location, th.total_seat, " +
                 "r.cash, r.credit, " +
                 "rs.id as seat_id, rs.seat_row, rs.seat_col " +
                 "FROM reservation r " +
@@ -95,7 +95,7 @@ public class ReservationRepository {
                         Theater theater = Theater.builder()
                                 .id(rs.getInt("theater_id"))
                                 .location(rs.getString("location"))
-                                .totalSeat(rs.getInt("totalSeat"))
+                                .totalSeat(rs.getInt("total_seat"))
                                 .build();
 
                         Reservation reservation = Reservation.builder()
@@ -223,4 +223,4 @@ public class ReservationRepository {
     }
 }
 
-}
+

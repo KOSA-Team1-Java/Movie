@@ -1,18 +1,12 @@
 package reservation;
 
 import member.Member;
-import movie.Movie;
 import movie.Screening;
 import movie.SeatRequest;
-import pay.CashPay;
-import pay.CreditPay;
-import pay.Pay;
-import pay.PayService;
 
 import java.sql.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Map;
 
 import static util.ConnectionConst.*;
 
@@ -23,9 +17,6 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public List<String> getReservationsByMember(Member member) {
-        return reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
-    }
 
     public void save(Member member, Screening screening, List<SeatRequest> seatList, int cash, int credit) {
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
@@ -53,28 +44,6 @@ public class ReservationService {
         }
     }
 
-//    public boolean cancelReservation(int reservationId) {
-//        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
-//            // 예매와 좌석 정보 삭제
-//            reservationRepository.deleteSeatsByReservationId(conn, reservationId);
-//            reservationRepository.deleteReservationById(conn, reservationId);
-//            return true;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
-//    public int getReservationIdByIndex(int index) {
-//        // 예약 내역을 가져와서 index에 맞는 예약 ID를 반환
-//        List<String> reservations = reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
-//        if (index >= 0 && index < reservations.size()) {
-//            String reservation = reservations.get(index);
-//            // 예매 정보에서 예약 ID 추출 (예: "예매 1번째" -> 1)
-//            return extractReservationIdFromString(reservation);
-//        }
-//        return -1;
-//    }
 
     private int extractReservationIdFromString(String reservationInfo) {
         // 예매 정보에서 예약 ID 추출 (예매 1번째 등)
@@ -91,16 +60,6 @@ public class ReservationService {
         }
     }
 
-//
-//    public void cancelReservation(int reservationId) {
-//        // 1. 좌석정보(ReservationSeat) 삭제
-//        reservationRepository.deleteReservationSeatsByReservationId(reservationId);
-//        // 2. 예약정보(Reservation) 삭제
-//        reservationRepository.deleteReservationById(reservationId);
-//    }
-    public List<String> getFormattedReservationsByMember(Member member) {
-        return reservationRepository.findReservationsByMemberLoginId(member.getLoginId());
-    }
 
     public int getReservationIdByIndex(Member member, int index) {
         return reservationRepository.findReservationIdByIndex(member.getLoginId(), index);
@@ -115,6 +74,7 @@ public class ReservationService {
         }
 
         for (ReservationDto reservation : reservations) {
+            System.out.println("예약 ID : " + reservation.getReservation().getId());
             // 영화 제목
             System.out.println(reservation.getMovie().getTitle());
 
@@ -185,4 +145,5 @@ public class ReservationService {
             e.printStackTrace();
             return false;
         }
+    }
 }
