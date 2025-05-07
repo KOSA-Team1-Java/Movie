@@ -176,10 +176,21 @@ public class BookCommand implements Command, RequiredMember {
         //결제
         PayService payService = new PayService(memberService);
         int totalPrice = selectedMovie.getPrice() * seatList.size();
+
+        System.out.print("결제수단 선택 (1: 현금 / 2: 카드): ");
+        int payMethod = scanner.nextInt(); scanner.nextLine();
+        int cash = 0, credit = 0;
+        if (payMethod == 1) {
+            cash = totalPrice;
+            member.decreaseCash(totalPrice);
+        } else {
+            credit = totalPrice;
+            member.decreaseCredit(totalPrice);
+        }
         payService.pay(member, totalPrice, scanner);
 
         //예매정보 db저장
-        reservationService.save(member, selectedScreening, seatList);
+        reservationService.save(member, selectedScreening, seatList, cash, credit);
 
         System.out.print("예매내역을 조회하시겠습니까? (1: 네 / 2: 나가기): ");
         String viewChoice = scanner.nextLine();
@@ -204,17 +215,6 @@ public class BookCommand implements Command, RequiredMember {
             System.out.println(); // 줄바꿈
             System.out.println("-----------------------------------");
         }
-
-        System.out.print("취소할 내역이 있습니까? (y/n): ");
-        String answer = scanner.nextLine().trim().toLowerCase();
-
-        if ("y".equals(answer)) {
-            // 반드시 새롭게 CancelCommand를 실행하면서 member(loginId) 정보만 넘김
-            CancelCommand cancelCommand = new CancelCommand(memberService, reservationService, scanner);
-            cancelCommand.setMember(member);
-            cancelCommand.execute(context);
-        }
-
         }
     @Override
     public boolean requiresLogin() {

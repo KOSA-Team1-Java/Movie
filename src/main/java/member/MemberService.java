@@ -2,12 +2,14 @@ package member;
 
 import exception.MovieException;
 import pay.Pay;
+import reservation.Reservation;
 import util.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import static util.ConnectionConst.*;
 
@@ -41,22 +43,13 @@ public class MemberService {
     }
 
 
-    public void refundBudget(Member member, int refundAmount) {
+    public void refundBudget(Member member, int refundCash, int refundCredit) {
         // 회원 객체의 cash/credit에 금액을 더해주기 (여기선 example로 cash에 환불)
-        member.setCash(member.getCash() + refundAmount);
+        member.setCash(member.getCash() + refundCash);
+        member.setCredit(member.getCredit() + refundCredit);
 
-        // DB에도 예산 변경 반영 (cash 기준)
-        String sql = "UPDATE member SET cash = ? WHERE loginid = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, member.getCash());
-            pstmt.setString(2, member.getLoginId());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.updateBudget(member);
     }
-
 
     public void processPayment(Member member, Pay payMethod, int amount) {
 

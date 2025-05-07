@@ -1,5 +1,6 @@
 package reservation;
 
+import member.Member;
 import movie.Screening;
 
 import java.sql.*;
@@ -137,10 +138,12 @@ public class ReservationRepository {
             String formattedSeats = String.join(", ", seats);
             String totalPeople = String.format("%d명", seats.size());
 
-            return String.format("%s\n%s %s ~ %s\n%s / %s\n좌석: %s",
-                    movieTitle, formattedDate, formattedStartTime, formattedEndTime, location, totalPeople, formattedSeats);
+            return String.format("[%d] %s\n%s %s ~ %s\n%s / %s\n좌석: %s",
+                    reservationId, movieTitle, formattedDate, formattedStartTime, formattedEndTime, location, totalPeople, formattedSeats);
         }
     }
+
+
 
     // 예산 업데이트
     public void updateBudget(Connection conn, String loginId, int newBudget) throws SQLException {
@@ -154,6 +157,7 @@ public class ReservationRepository {
             }
         }
     }
+
 
     // 좌석(Seat) count 조회
     public int countReservedSeatsByScreeningId(int screeningId) {
@@ -193,4 +197,68 @@ public class ReservationRepository {
         }
         return reservedSeats;
     }
+
+    // 기존 메서드와 별개로 오버로드 제공: DB에 cash/credit도 저장
+    public int insertReservation(Connection conn, String memberLoginId, int screeningId, int cash, int credit) throws SQLException {
+        String sql = "INSERT INTO reservation (member_loginId, screening_id, cash, credit) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, memberLoginId);
+            pstmt.setInt(2, screeningId);
+            pstmt.setInt(3, cash);
+            pstmt.setInt(4, credit);
+            pstmt.executeUpdate();
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // 생성된 reservation_id 반환
+                }
+            }
+        }
+        return -1;
+    }
+
+    // 환불/취소용 findReservationById 추가
+    public Reservation findReservationById(int reservationId, List<Screening> allScreenings) {
+        String sql = "SELECT * FROM reservation WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, reservationId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int screeningId = rs.getInt("screening_id");
+                    int cash = rs.getInt("cash");
+                    int credit = rs.getInt("credit");
+                    // Screening은 추가적으로 조회해서 생성해야 함!
+                    Screening screening = allScreenings.stream()
+                            .filter(s -> s.getId() == screeningId)
+                            .findFirst().orElse(null);
+                    return new Reservation(reservationId, screening, 1, null, cash, credit);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void deleteReservationSeatsByReservationId(int reservationId) {
+        String sql = "DELETE FROM reservationseat WHERE reservation_id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, reservationId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void deleteReservationById(int reservationId) {
+        String sql = "DELETE FROM reservation WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, reservationId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

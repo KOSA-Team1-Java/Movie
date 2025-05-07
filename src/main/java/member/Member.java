@@ -68,4 +68,8 @@ public class Member {
     public void setCash(int cash) {
         this.cash = cash;
     }
+
+    public void setCredit(int credit) {
+        this.credit = credit;
+    }
 }

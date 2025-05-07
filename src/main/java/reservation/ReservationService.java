@@ -1,6 +1,7 @@
 package reservation;
 
 import member.Member;
+import member.MemberService;
 import movie.Screening;
 import movie.SeatRequest;
 
@@ -19,12 +20,13 @@ public class ReservationService {
 
 
     }
-    public void save(Member member, Screening screening, List<SeatRequest> seatList) {
+
+    public void save(Member member, Screening screening, List<SeatRequest> seatList, int cash, int credit) {
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
             conn.setAutoCommit(false); // 트랜잭션 시작
 
             // 1. reservation 테이블에 저장
-            int reservationId = reservationRepository.insertReservation(conn, member.getLoginId(), screening.getId());
+            int reservationId = reservationRepository.insertReservation(conn, member.getLoginId(), screening.getId(), cash, credit);
 
             // 2. 좌석 정보 저장 (reservation_seat 테이블)
             for (SeatRequest seat : seatList) {
@@ -40,15 +42,16 @@ public class ReservationService {
     }
 
 
-    public List<Integer> getReservationsByMember(String loginId) {
-        return reservationRepository.findReservationIdsByMemberLoginId(loginId);
-    }
+     // 예매 취소(좌석+예매 삭제, 반환값=환불금액)
+     public void cancelReservation(int reservationId, Member member, MemberService memberService, List<Screening> allScreenings) {
+         Reservation reservation = reservationRepository.findReservationById(reservationId, allScreenings);
 
+         int refundCash = reservation.getCash();
+         int refundCredit = reservation.getCredit();
 
-    public void cancelReservation(int reservationId) {
-        // 1. 좌석정보(ReservationSeat) 삭제
-        reservationRepository.deleteReservationSeatsByReservationId(reservationId);
-        // 2. 예약정보(Reservation) 삭제
-        reservationRepository.deleteReservationById(reservationId);
-    }
+         reservationRepository.deleteReservationSeatsByReservationId(reservationId);
+         reservationRepository.deleteReservationById(reservationId);
+
+         memberService.refundBudget(member, refundCash, refundCredit);
+     }
 }
