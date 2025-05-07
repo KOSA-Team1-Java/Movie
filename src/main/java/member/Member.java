@@ -67,6 +67,9 @@ public class Member {
         this.password = hashedPassword;
     }
 
+    public void setCash(int cash) {
+        this.cash = cash;
+    }
     public void setCredit(int credit) {
         this.credit = credit;
     }

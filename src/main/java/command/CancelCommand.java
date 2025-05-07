@@ -6,6 +6,7 @@ import member.MemberService;
 import movie.MovieService;
 import movie.Screening;
 import reservation.Reservation;
+import reservation.ReservationDto;
 import reservation.ReservationService;
 
 import java.sql.Connection;
@@ -39,77 +40,40 @@ public class CancelCommand implements Command, RequiredMember{
             return;
         }
 
-        // 1. 프로그램에 이미 존재하는 모든 Screening 리스트 재활용
-        List<Screening> allScreenings = movieService.getAllScreenings();
+        // 1. 예매 내역 출력 (ReservationDto 기반)
+        List<ReservationDto> reservationDtos = reservationService.viewReservationsAndReturn(member);
 
-        // 2. 예매 내역 리스트 조회 (Repository, Service 통해)
-        List<Reservation> reservations = new ArrayList<>();
-        // ReservationRepository에는 by memberLoginId + screening list를 받아 Reservation을 반환하는 메서드를 직접 만드세요.
-        // 아래는 직접 ReservationRepository에서 가져오는 예제
-        String loginId = member.getLoginId();
-        try {
-            String sql = "SELECT * FROM reservation WHERE member_loginId = ?";
-            try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setString(1, loginId);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
-                        int reservationId = rs.getInt("id");
-                        int screeningId = rs.getInt("screening_id");
-                        int cash = rs.getInt("cash");
-                        int credit = rs.getInt("credit");
-                        Screening screening = allScreenings.stream()
-                                .filter(s -> s.getId() == screeningId)
-                                .findFirst().orElse(null);
-                        // Reservation 생성자(생성자 구조에 맞게 peopleCount 등 채우기)
-                        reservations.add(new Reservation(reservationId, screening, 1, member, cash, credit));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (reservations.isEmpty()) {
+        if (reservationDtos.isEmpty()) {
             System.out.println("예매 내역이 없습니다.");
             return;
         }
 
-        // 2. 예매 목록 출력
-        System.out.println("=== 예매 내역 ===");
-        for (int i = 0; i < reservations.size(); i++) {
-            Reservation r = reservations.get(i);
-            System.out.printf("%d. [%s] %s %s (%d명, 총 %d원)\n",
-                    i + 1,
-                    r.getScreening().getMovie().getTitle(),
-                    r.getScreening().getScreeningDate(),
-                    r.getScreening().getStartTime(),
-                    r.getPeopleCount(),
-                    r.getTotalPrice()
-            );
-        }
-
-        System.out.print("취소할 예매 번호를 입력하세요(0번: 취소): ");
-        int idx = 0;
+        // 2. 예매 번호(Reservation id) 입력
+        System.out.print("\n취소할 예매의 예매번호(id)를 입력하세요 (0: 취소): ");
+        int reservationId;
         try {
-            idx = Integer.parseInt(scanner.nextLine());
+            reservationId = Integer.parseInt(scanner.nextLine());
         } catch (Exception e) {
-            System.out.println("올바른 번호를 입력하세요.");
+            System.out.println("잘못된 입력입니다.");
             return;
         }
-        if (idx <= 0 || idx > reservations.size()) {
+        if (reservationId == 0) {
             System.out.println("예매 취소를 종료합니다.");
             return;
         }
 
-        Reservation toCancel = reservations.get(idx - 1);
+        // 3. 예매 취소/환불 실행
+//        List<Screening> allScreenings = movieService.getAllScreenings(); // (환불/좌석반환에 필요)
+        List<Screening> allScreenings = movieService.getScreenings(reservationId);
 
-        // 3. 환불·좌석반환·예매삭제 한번에 처리 (Service에 위임)
-        reservationService.cancelReservation(toCancel.getId(), member, memberService, allScreenings);
+        boolean result = reservationService.cancelReservationWithCheck(reservationId, member, memberService, allScreenings);
 
-        System.out.println("✅ 예매 취소 및 환불이 완료되었습니다.");
-        System.out.printf("환불 후 예산: 현금=%d원, 카드=%d원\n", member.getCash(), member.getCredit());
-
+        if (result) {
+            System.out.println("✅ 예매 취소 및 환불이 완료되었습니다.");
+            System.out.printf("환불 후 예산: 현금=%d원, 카드=%d원\n", member.getCash(), member.getCredit());
+        } else {
+            System.out.println("❌ 선택하신 예매번호가 없거나 취소 실패했습니다.");
+        }
     }
 
     @Override

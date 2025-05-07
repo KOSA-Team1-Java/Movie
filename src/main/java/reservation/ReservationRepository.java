@@ -242,6 +242,7 @@ public class ReservationRepository {
         return null;
     }
 
+
     public void deleteReservationSeatsByReservationId(int reservationId) {
         String sql = "DELETE FROM reservationseat WHERE reservation_id = ?";
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);

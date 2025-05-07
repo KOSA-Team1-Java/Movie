@@ -51,7 +51,7 @@ public class ReservationService {
         }
     }
 
-
+/*
     // 예매 취소(좌석+예매 삭제, 반환값=환불금액)
     public void cancelReservation(int reservationId, Member member, MemberService memberService, List<Screening> allScreenings) {
         Reservation reservation = reservationRepository.findReservationById(reservationId, allScreenings);
@@ -64,4 +64,44 @@ public class ReservationService {
 
         memberService.refundBudget(member, refundCash, refundCredit);
     }
+
+ */
+
+    public List<ReservationDto> viewReservationsAndReturn(Member member) {
+        List<ReservationDto> reservations = reservationRepository.findReservationsByMember(member);
+
+        if (reservations.isEmpty()) {
+            System.out.println("예매 내역이 없습니다.");
+            return reservations;
+        }
+        System.out.println("\n=== 예매 내역 ===");
+        for (ReservationDto dto : reservations) {
+            System.out.printf("[예매번호: %d]\n", dto.getReservation().getId());
+            System.out.println("영화: " + dto.getMovie().getTitle());
+            System.out.println("상영일시: " + dto.getScreening().getScreeningDate() + " "
+                    + dto.getScreening().getStartTime() + "~" + dto.getScreening().getEndTime());
+            System.out.println("극장: " + dto.getTheater().getLocation());
+            System.out.println("좌석: " + String.join(", ", dto.getSeats()));
+            System.out.println("결제내역: 현금 " + dto.getReservation().getCash() + "원, 카드 " + dto.getReservation().getCredit() + "원");
+            System.out.println("-----------------------");
+        }
+        return reservations;
+    }
+
+    public boolean cancelReservationWithCheck(int reservationId, Member member, MemberService memberService, List<Screening> allScreenings) {
+        Reservation reservation = reservationRepository.findReservationById(reservationId, allScreenings);
+        if (reservation == null) {
+            return false;
+        }
+        int refundCash = reservation.getCash();
+        int refundCredit = reservation.getCredit();
+
+        reservationRepository.deleteReservationSeatsByReservationId(reservationId);
+        reservationRepository.deleteReservationById(reservationId);
+
+        memberService.refundBudget(member, refundCash, refundCredit);
+        return true;
+    }
+
+
 }
