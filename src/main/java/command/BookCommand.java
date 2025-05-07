@@ -31,11 +31,6 @@ public class BookCommand implements Command, RequiredMember {
     }
 
     @Override
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
-    @Override
     public void execute(MainController context) throws CustomException {
         // 1단계: 영화 목록 출력
         System.out.println("상영 중인 영화");
@@ -200,6 +195,11 @@ public class BookCommand implements Command, RequiredMember {
             System.out.println(); // 줄바꿈
             System.out.println("-----------------------------------");
         }
+    }
+
+    @Override
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     @Override

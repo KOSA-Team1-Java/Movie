@@ -19,11 +19,11 @@ public class ChangeNameCommand implements Command, RequiredMember {
 
     @Override
     public void execute(MainController context) {
-        System.out.print("새 이름을 입력하세요: ");
+        System.out.print("새 이름을 입력하세요 : ");
         String newName = scanner.nextLine();
 
-        member = memberService.updateName(member, newName); // DB 반영 및 객체 갱신
-        System.out.println("이름이 성공적으로 변경되었습니다.");
+        member = memberService.updateName(member, newName);
+        System.out.println(member.getName() + "님 이름이 성공적으로 변경되었습니다.");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package member;
 
 import exception.DataAccessException;
+import exception.UpdateException;
 import util.PasswordHasher;
 
 import java.sql.*;
@@ -23,7 +24,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
             System.out.println("successfully signup");
         } catch (SQLException e) {
-            throw new DataAccessException(e);
+            throw new DataAccessException("회원가입 중 오류 발생 ", e);
         }
     }
 
@@ -44,7 +45,7 @@ public class MemberRepository {
                 return new Member(id, password, name, age, cash, credit);
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e);
+            throw new DataAccessException("회원을 찾을 수 없습니다.", e);
         }
         return null;
     }
@@ -53,52 +54,44 @@ public class MemberRepository {
         String sql = "UPDATE member SET cash = ?, credit =? WHERE loginid = ?";
         try(Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, member.getCash());
             pstmt.setInt(2, member.getCredit());
             pstmt.setString(3, member.getLoginId());
             pstmt.executeUpdate();
+
         } catch (SQLException e) {
-            throw new DataAccessException(e);
+            throw new UpdateException("잔액 업데이트 오류 발생", e);
         }
         return member;
     }
 
-    public Member updateName(Member member, String newName) {
+    public Member updateName(Member member) {
         String sql = "UPDATE member SET name = ? WHERE loginid = ?";
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, newName);
+            pstmt.setString(1, member.getName());
             pstmt.setString(2, member.getLoginId());
             pstmt.executeUpdate();
 
             return member; // 변경된 객체를 반환
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new UpdateException("이름 업데이트 중 오류 발생", e);
         }
     }
 
-    public Member updatePassword(Member member, String newPassword) {
+    public void updatePassword(Member member) {
         String sql = "UPDATE member SET password = ? WHERE loginid = ?";
         try (Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // 새로운 비밀번호 해시화
-            String hashedPassword = PasswordHasher.hash(newPassword);
-            pstmt.setString(1, hashedPassword);
+            pstmt.setString(1, member.getPassword());
             pstmt.setString(2, member.getLoginId());
-
             pstmt.executeUpdate();
 
-            // 비밀번호 변경 후 객체의 비밀번호 갱신
-            member.setPassword(hashedPassword); // 객체 내 비밀번호를 갱신
-            return member;
         } catch (SQLException e) {
-            throw new MovieException(e);
+            throw new UpdateException("비밀 번호 업데이트 중 오류 발생", e);
         }
     }
-
-
-
-
 }

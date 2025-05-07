@@ -1,7 +1,6 @@
 package command;
 
 import controller.MainController;
-import exception.CustomException;
 import member.Member;
 import member.MemberService;
 
@@ -18,18 +17,15 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public void execute(MainController context) {
+    public void execute(MainController controller) {
         System.out.print("ID : ");
         String id = scanner.nextLine();
         System.out.print("Password : ");
         String password = scanner.nextLine();
-        try {
-            member = memberService.login(id, password);
-            context.setLoginMember(member);
-            System.out.println(member.getName() + "님 로그인 되었습니다.");
-        } catch (Exception e) {
-            throw new CustomException("로그인 실패",e);
-        }
+
+        member = memberService.login(id, password);
+        controller.setLoginMember(member);
+        System.out.println(member.getName() + "님 로그인 되었습니다.");
     }
 
     @Override

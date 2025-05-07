@@ -3,13 +3,6 @@ package member;
 import exception.CustomException;
 import util.PasswordHasher;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import static util.ConnectionConst.*;
-
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -23,7 +16,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public Member login(String id, String password) throws CustomException {
+    public Member login(String id, String password) {
         Member member = memberRepository.findById(id);
         if (member == null) {
             throw new CustomException("존재하지 않는 회원입니다.");
@@ -41,14 +34,16 @@ public class MemberService {
 
     public void refundBudget(Member member, int refundAmount) {
         // 회원 객체의 cash/credit에 금액을 더해주기 (여기선 example로 cash에 환불)
-        member.setCash(member.getCash() + refundAmount);
+//        member.setCash(member.getCash() + refundAmount);
     }
 
     public Member updateName(Member member, String newName) {
-        return memberRepository.updateName(member, newName);
+        member.updateName(newName);
+        return memberRepository.updateName(member);
     }
 
-    public Member updatePassword(Member member, String newPassword) {
-        return memberRepository.updatePassword(member, newPassword);
+    public void updatePassword(Member member, String newPassword) {
+        member.updatePassword(PasswordHasher.hash(newPassword));
+        memberRepository.updatePassword(member);
     }
 }

@@ -59,9 +59,11 @@ public class Member {
         this.credit -= amount;
     }
 
-    public void setName(String newName) {
+    public void updateName(String newName) {
+        this.name = newName;
     }
 
-    public void setPassword(String hashedPassword) {
+    public void updatePassword(String hashedPassword) {
+        this.password = hashedPassword;
     }
 }
