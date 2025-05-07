@@ -47,6 +47,14 @@ public class CancelCommand implements Command, RequiredMember{
         boolean success = reservationService.cancelReservation(reservationId, member.getLoginId());
         if (success) {
             System.out.println("✅ 예매가 정상적으로 취소되었습니다.");
+
+            // 환불된 최신 Member 정보 반영
+            Member refreshed = memberService.findByLoginId(member.getLoginId());
+            member.setCash(refreshed.getCash());
+            member.setCredit(refreshed.getCredit());
+
+            System.out.println("💸 환불 완료! 현재 잔액 - 현금: " + member.getCash() + "원, 카드: " + member.getCredit() + "원");
+
         } else {
             System.out.println("❌ 예매 취소 중 오류가 발생했습니다.");
         }

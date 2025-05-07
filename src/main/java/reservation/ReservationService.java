@@ -73,8 +73,10 @@ public class ReservationService {
             return;
         }
 
+        int idx = 1;
         for (ReservationDto reservation : reservations) {
-            System.out.println("예약 ID : " + reservation.getReservation().getId());
+            System.out.println("-------------예매정보 조회-------------");
+            System.out.println("예매번호 : " + (idx++)); // 인덱스 1부터 시작!
             // 영화 제목
             System.out.println(reservation.getMovie().getTitle());
 

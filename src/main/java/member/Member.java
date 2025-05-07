@@ -52,4 +52,12 @@ public class Member {
     public void updatePassword(String hashedPassword) {
         this.password = hashedPassword;
     }
+
+    public void setCash(int cash) {
+        this.cash = cash;
+    }
+
+    public void setCredit(int credit) {
+        this.credit = credit;
+    }
 }

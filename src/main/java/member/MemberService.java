@@ -46,4 +46,8 @@ public class MemberService {
         member.updatePassword(PasswordHasher.hash(newPassword));
         memberRepository.updatePassword(member);
     }
+
+    public Member findByLoginId(String loginId) {
+        return memberRepository.findById(loginId);
+    }
 }
