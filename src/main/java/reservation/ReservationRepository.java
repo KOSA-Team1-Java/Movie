@@ -1,5 +1,6 @@
 package reservation;
 
+import exception.MovieException;
 import member.Member;
 import movie.Movie;
 import movie.Screening;
@@ -29,7 +30,7 @@ public class ReservationRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MovieException(e.getMessage());
         }
         return -1;
     }
@@ -46,7 +47,7 @@ public class ReservationRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MovieException(e.getMessage());
         }
         return 0;
     }
@@ -66,7 +67,7 @@ public class ReservationRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MovieException(e.getMessage());
         }
         return reservedSeats;
     }
@@ -145,7 +146,7 @@ public class ReservationRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MovieException(e.getMessage());
         }
         return new ArrayList<>(reservationMap.values());
     }

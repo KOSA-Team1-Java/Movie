@@ -1,7 +1,6 @@
 package member;
 
-import exception.DataAccessException;
-import exception.UpdateException;
+import exception.MovieException;
 import util.PasswordHasher;
 
 import java.sql.*;
@@ -24,7 +23,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
             System.out.println("successfully signup");
         } catch (SQLException e) {
-            throw new DataAccessException("회원가입 중 오류 발생 ", e);
+            throw new MovieException(e.getMessage());
         }
     }
 
@@ -45,7 +44,7 @@ public class MemberRepository {
                 return new Member(id, password, name, age, cash, credit);
             }
         } catch (SQLException e) {
-            throw new DataAccessException("회원을 찾을 수 없습니다.", e);
+            throw new MovieException(e.getMessage());
         }
         return null;
     }
@@ -61,7 +60,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new UpdateException("잔액 업데이트 오류 발생", e);
+            throw new MovieException(e.getMessage());
         }
         return member;
     }
@@ -77,7 +76,7 @@ public class MemberRepository {
 
             return member; // 변경된 객체를 반환
         } catch (SQLException e) {
-            throw new UpdateException("이름 업데이트 중 오류 발생", e);
+            throw new MovieException(e.getMessage());
         }
     }
 
@@ -91,7 +90,7 @@ public class MemberRepository {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new UpdateException("비밀 번호 업데이트 중 오류 발생", e);
+            throw new MovieException(e.getMessage());
         }
     }
 }

@@ -1,11 +1,13 @@
 package member;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class Member {
 
     private String loginId;
@@ -36,26 +38,10 @@ public class Member {
     }
 
     public void decreaseCash(int amount) {
-        if (amount <= 0) {
-            System.out.println("❌ 차감할 금액은 0보다 커야 합니다.");
-            return;
-        }
-        if (this.cash < amount) {
-            System.out.println("❌ 예산이 부족하여 차감할 수 없습니다.");
-            return;
-        }
         this.cash -= amount;
     }
 
     public void decreaseCredit(int amount) {
-        if (amount <= 0) {
-            System.out.println("❌ 차감할 금액은 0보다 커야 합니다.");
-            return;
-        }
-        if (this.credit < amount) {
-            System.out.println("❌ 예산이 부족하여 차감할 수 없습니다.");
-            return;
-        }
         this.credit -= amount;
     }
 

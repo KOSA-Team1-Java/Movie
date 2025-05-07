@@ -1,6 +1,6 @@
 package member;
 
-import exception.CustomException;
+import exception.MovieException;
 import util.PasswordHasher;
 
 public class MemberService {
@@ -11,7 +11,7 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public void signUp(String id, String password, String name, int age) throws CustomException {
+    public void signUp(String id, String password, String name, int age) throws MovieException {
         Member member = new Member(id, password, name, age);
         memberRepository.save(member);
     }
@@ -19,11 +19,11 @@ public class MemberService {
     public Member login(String id, String password) {
         Member member = memberRepository.findById(id);
         if (member == null) {
-            throw new CustomException("존재하지 않는 회원입니다.");
+            throw new MovieException("존재하지 않는 회원입니다.");
         }
         String hashPassword = PasswordHasher.hash(password);
         if (!member.getPassword().equals(hashPassword)) {
-            throw new CustomException("존재하지 않는 회원입니다.");
+            throw new MovieException("존재하지 않는 회원입니다.");
         }
         return member;
     }

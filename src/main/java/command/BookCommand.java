@@ -1,7 +1,7 @@
 package command;
 
 import controller.MainController;
-import exception.CustomException;
+import exception.MovieException;
 import member.Member;
 import member.MemberService;
 import movie.Movie;
@@ -31,7 +31,7 @@ public class BookCommand implements Command, RequiredMember {
     }
 
     @Override
-    public void execute(MainController context) throws CustomException {
+    public void execute(MainController context) throws MovieException {
         // 1단계: 영화 목록 출력
         System.out.println("상영 중인 영화");
         movieService.showMovie();

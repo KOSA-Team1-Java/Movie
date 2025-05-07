@@ -1,6 +1,6 @@
 package movie;
 
-import exception.DataAccessException;
+import exception.MovieException;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -24,7 +24,7 @@ public class MovieRepository {
             }
             return movies;
         } catch (SQLException e) {
-            throw new DataAccessException("영화 목록 조회 실패", e);
+            throw new MovieException(e.getMessage());
         }
     }
 
@@ -39,14 +39,11 @@ public class MovieRepository {
                     String title = rs.getString("title");
                     int price = rs.getInt("price");
                     int age = rs.getInt("age");
-                    Movie movie = new Movie(id, title, price, age); // 생성자에 price/age 추가되어 있으면 거기에 맞게 생성
-                    movie.setPrice(price); // setPrice/setAge 필요
-                    movie.setAge(age);
-                    return movie;
+                    return new Movie(id, title, price, age);
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("영화 조회 실패", e);
+            throw new MovieException(e.getMessage());
         }
         return null;
     }
@@ -85,7 +82,7 @@ public class MovieRepository {
                 screenings.add(new Screening(screeningId, movie, theater, screeningDate, startTime, endTime));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("상영 조회 실패", e);
+            throw new MovieException(e.getMessage());
         }
         return screenings;
     }
